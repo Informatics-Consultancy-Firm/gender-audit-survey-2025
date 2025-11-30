@@ -1372,14 +1372,30 @@
     </div>
 
     <script>
+    <script>
         // ============================================
-        // CONFIGURATION
+        // ⚙️ CONFIGURATION - PASTE YOUR URLS HERE ⚙️
         // ============================================
+        // 
+        // STEP 1: Deploy Google Apps Script (Code.gs) as a Web App
+        // STEP 2: Copy the Web App URL and paste it below in SCRIPT_URL
+        // STEP 3: Copy your Google Sheet URL and paste it below in GOOGLE_SHEET_URL
+        // STEP 4: (Optional) Change admin username and password below
+        //
+        // ============================================
+        
         const CONFIG = {
-            SCRIPT_URL: 'https://docs.google.com/spreadsheets/d/1tumwvxOoToPYDPdpXLyGYaiT2kbfN6Vw_HBd-8t6IAA/edit?gid=353413478#gid=353413478',
-            GOOGLE_SHEET_URL: 'https://script.google.com/macros/s/AKfycbzs_hVlsEQAu_4qeOaZUTjS_cnH3NR22ecQ8QUu5Zw_z8WpOzjnoMLo8Tm-hgQnohQ_zw/exec',
+            // 📌 PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
+            SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzs_hVlsEQAu_4qeOaZUTjS_cnH3NR22ecQ8QUu5Zw_z8WpOzjnoMLo8Tm-hgQnohQ_zw/exec',
+            
+            // 📌 PASTE YOUR GOOGLE SHEET URL HERE:
+            GOOGLE_SHEET_URL: 'https://docs.google.com/spreadsheets/d/1tumwvxOoToPYDPdpXLyGYaiT2kbfN6Vw_HBd-8t6IAA/edit?gid=353413478#gid=353413478',
+            
+            // 🔐 ADMIN CREDENTIALS (for viewing data/analysis):
             LOGIN_USERNAME: 'bbc',
             LOGIN_PASSWORD: 'bbc',
+            
+            // 📊 SHEET NAMES (don't change these):
             SHEETS: {
                 SURVEY_DATA: 'SURVEY_DATA',
                 SUMMARY: 'SUMMARY_REPORT'
@@ -1502,7 +1518,13 @@
                         conditional: 'women_face_barriers',
                         conditionalValue: 'Yes'
                     },
-                    entry_barriers_other: { label: 'If Other, Please Specify', type: 'text', required: false },
+                    entry_barriers_other: { 
+                        label: 'If Other, Please Specify', 
+                        type: 'text', 
+                        required: false,
+                        conditional: 'entry_barriers',
+                        conditionalValue: 'Other'
+                    },
                     equal_retention: { 
                         label: 'Q14. Do women journalists in your media institution have equal chances of being retained compared to men?', 
                         type: 'radio',
@@ -1534,7 +1556,13 @@
                         ],
                         required: false
                     },
-                    departure_reasons_other: { label: 'If Other, Please Specify', type: 'text', required: false },
+                    departure_reasons_other: { 
+                        label: 'If Other, Please Specify', 
+                        type: 'text', 
+                        required: false,
+                        conditional: 'departure_reasons',
+                        conditionalValue: 'Other'
+                    },
                     career_stage_departure: { 
                         label: 'Q17. At what stage of their career did most women leave your media institution?', 
                         type: 'radio',
@@ -1566,7 +1594,13 @@
                         ],
                         required: false
                     },
-                    attrition_impact_other: { label: 'If Other, Please Specify', type: 'text', required: false }
+                    attrition_impact_other: { 
+                        label: 'If Other, Please Specify', 
+                        type: 'text', 
+                        required: false,
+                        conditional: 'attrition_impact',
+                        conditionalValue: 'Other'
+                    }
                 }
             },
             'Respondent Information & Signature': {
@@ -1577,7 +1611,7 @@
                     respondent_contact: { label: 'Contact Number', type: 'tel' },
                     respondent_email: { label: 'Email Address', type: 'email', required: false },
                     survey_date: { label: 'Date of Survey', type: 'date' },
-                    respondent_signature: { label: 'Signature', type: 'signature' },
+                    respondent_signature: { label: 'Signature (Optional if offline)', type: 'signature', required: false },
                     gps_location: { label: 'GPS Location (Optional)', type: 'gps', required: false }
                 }
             }
@@ -1786,28 +1820,56 @@
                 const parentFieldName = field.getAttribute('data-conditional');
                 const expectedValue = field.getAttribute('data-conditional-value');
                 
-                // Find parent radio buttons
-                const parentRadios = document.querySelectorAll(`input[name="${parentFieldName}"]`);
+                // Find parent controls (could be radio buttons or checkboxes)
+                const parentRadios = document.querySelectorAll(`input[name="${parentFieldName}"][type="radio"]`);
+                const parentCheckboxes = document.querySelectorAll(`input[name="${parentFieldName}"][type="checkbox"]`);
                 
-                parentRadios.forEach(radio => {
-                    radio.addEventListener('change', function() {
-                        if (this.value === expectedValue) {
-                            field.classList.add('show');
-                        } else {
-                            field.classList.remove('show');
-                            // Clear any selections in the conditional field
-                            const checkboxes = field.querySelectorAll('input[type="checkbox"]');
-                            checkboxes.forEach(cb => cb.checked = false);
-                            const textInputs = field.querySelectorAll('input[type="text"], textarea');
-                            textInputs.forEach(input => input.value = '');
+                // Handle radio button parents (like Q12)
+                if (parentRadios.length > 0) {
+                    parentRadios.forEach(radio => {
+                        radio.addEventListener('change', function() {
+                            if (this.value === expectedValue) {
+                                field.classList.add('show');
+                            } else {
+                                field.classList.remove('show');
+                                // Clear any selections in the conditional field
+                                const checkboxes = field.querySelectorAll('input[type="checkbox"]');
+                                checkboxes.forEach(cb => cb.checked = false);
+                                const textInputs = field.querySelectorAll('input[type="text"], textarea');
+                                textInputs.forEach(input => input.value = '');
+                            }
+                        });
+                    });
+                    
+                    // Check initial state for radio
+                    const checkedRadio = document.querySelector(`input[name="${parentFieldName}"]:checked`);
+                    if (checkedRadio && checkedRadio.value === expectedValue) {
+                        field.classList.add('show');
+                    }
+                }
+                
+                // Handle checkbox parents (like "Other" checkbox)
+                if (parentCheckboxes.length > 0) {
+                    parentCheckboxes.forEach(checkbox => {
+                        // Check if this specific checkbox matches the expected value
+                        if (checkbox.value === expectedValue) {
+                            checkbox.addEventListener('change', function() {
+                                if (this.checked) {
+                                    field.classList.add('show');
+                                } else {
+                                    field.classList.remove('show');
+                                    // Clear the text input when hidden
+                                    const textInputs = field.querySelectorAll('input[type="text"], textarea');
+                                    textInputs.forEach(input => input.value = '');
+                                }
+                            });
+                            
+                            // Check initial state for checkbox
+                            if (checkbox.checked) {
+                                field.classList.add('show');
+                            }
                         }
                     });
-                });
-                
-                // Check initial state
-                const checkedRadio = document.querySelector(`input[name="${parentFieldName}"]:checked`);
-                if (checkedRadio && checkedRadio.value === expectedValue) {
-                    field.classList.add('show');
                 }
             });
         }
@@ -1855,6 +1917,20 @@
                 return;
             }
             
+            // SPECIAL VALIDATION FOR SECTION B (Workforce Composition)
+            if (state.currentSection === 2) {
+                if (!validateSectionBEmployeeNumbers()) {
+                    return; // Don't proceed if validation fails
+                }
+            }
+            
+            // SPECIAL VALIDATION FOR SECTION E (Positions)
+            if (state.currentSection === 3) {
+                if (!validateSectionEPositionNumbers()) {
+                    return; // Don't proceed if validation fails
+                }
+            }
+            
             if (state.currentSection < state.totalSections) {
                 currentSectionEl.classList.remove('active');
                 state.currentSection++;
@@ -1865,6 +1941,124 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             }
+        }
+
+        function validateSectionBEmployeeNumbers() {
+            // Get values from Section B
+            const totalEmployees = parseInt(document.querySelector('[name="total_employees"]')?.value) || 0;
+            const totalFemale = parseInt(document.querySelector('[name="total_female_employees"]')?.value) || 0;
+            const totalMale = parseInt(document.querySelector('[name="total_male_employees"]')?.value) || 0;
+            
+            // Check if all fields are filled
+            if (totalEmployees === 0 || totalFemale === 0 || totalMale === 0) {
+                return true; // Allow proceeding if not all filled yet (required validation handles this)
+            }
+            
+            // Validation: Total Female + Total Male should equal Total Employees
+            const genderTotal = totalFemale + totalMale;
+            if (genderTotal !== totalEmployees) {
+                showNotification(
+                    `⚠️ EMPLOYEE COUNT MISMATCH!\n\n` +
+                    `Total Employees: ${totalEmployees}\n` +
+                    `Female + Male: ${totalFemale} + ${totalMale} = ${genderTotal}\n\n` +
+                    `❌ These numbers DO NOT MATCH!\n\n` +
+                    `Please fix: Female + Male MUST equal Total Employees.\n\n` +
+                    `You cannot proceed until the numbers match.`,
+                    'error'
+                );
+                
+                // Highlight the fields with red border
+                document.querySelector('[name="total_employees"]').style.borderColor = '#dc3545';
+                document.querySelector('[name="total_female_employees"]').style.borderColor = '#dc3545';
+                document.querySelector('[name="total_male_employees"]').style.borderColor = '#dc3545';
+                
+                setTimeout(() => {
+                    document.querySelector('[name="total_employees"]').style.borderColor = '';
+                    document.querySelector('[name="total_female_employees"]').style.borderColor = '';
+                    document.querySelector('[name="total_male_employees"]').style.borderColor = '';
+                }, 5000);
+                
+                return false;
+            }
+            
+            // Show success with green borders if valid
+            document.querySelector('[name="total_employees"]').style.borderColor = '#28a745';
+            document.querySelector('[name="total_female_employees"]').style.borderColor = '#28a745';
+            document.querySelector('[name="total_male_employees"]').style.borderColor = '#28a745';
+            
+            setTimeout(() => {
+                document.querySelector('[name="total_employees"]').style.borderColor = '';
+                document.querySelector('[name="total_female_employees"]').style.borderColor = '';
+                document.querySelector('[name="total_male_employees"]').style.borderColor = '';
+            }, 2000);
+            
+            return true;
+        }
+
+        function validateSectionEPositionNumbers() {
+            // Get values from Section B
+            const totalEmployees = parseInt(document.querySelector('[name="total_employees"]')?.value) || 0;
+            const totalFemale = parseInt(document.querySelector('[name="total_female_employees"]')?.value) || 0;
+            const totalMale = parseInt(document.querySelector('[name="total_male_employees"]')?.value) || 0;
+            
+            // Get values from Section E
+            const leadershipWomen = parseInt(document.querySelector('[name="leadership_women"]')?.value) || 0;
+            const leadershipMen = parseInt(document.querySelector('[name="leadership_men"]')?.value) || 0;
+            const nonManagerialWomen = parseInt(document.querySelector('[name="non_managerial_women"]')?.value) || 0;
+            const nonManagerialMen = parseInt(document.querySelector('[name="non_managerial_men"]')?.value) || 0;
+            
+            // Check if all position fields are filled
+            if (leadershipWomen === 0 && leadershipMen === 0 && nonManagerialWomen === 0 && nonManagerialMen === 0) {
+                return true; // Allow proceeding if not all filled yet
+            }
+            
+            // Validation 1: Leadership + Non-Leadership should equal Total Employees
+            const positionTotal = leadershipWomen + leadershipMen + nonManagerialWomen + nonManagerialMen;
+            if (positionTotal !== totalEmployees) {
+                showNotification(
+                    `⚠️ POSITION COUNT MISMATCH!\n\n` +
+                    `Total Employees (from Section B): ${totalEmployees}\n` +
+                    `All Positions: ${positionTotal}\n\n` +
+                    `Leadership: ${leadershipWomen + leadershipMen} (W: ${leadershipWomen}, M: ${leadershipMen})\n` +
+                    `Non-Leadership: ${nonManagerialWomen + nonManagerialMen} (W: ${nonManagerialWomen}, M: ${nonManagerialMen})\n\n` +
+                    `❌ All positions must add up to Total Employees!\n\n` +
+                    `You cannot proceed until numbers match.`,
+                    'error'
+                );
+                return false;
+            }
+            
+            // Validation 2: Gender breakdown in positions should match
+            const totalWomenInPositions = leadershipWomen + nonManagerialWomen;
+            const totalMenInPositions = leadershipMen + nonManagerialMen;
+            
+            if (totalWomenInPositions !== totalFemale) {
+                showNotification(
+                    `⚠️ FEMALE COUNT MISMATCH!\n\n` +
+                    `Total Female Employees (from Section B): ${totalFemale}\n` +
+                    `Women in Positions (Section E): ${totalWomenInPositions}\n` +
+                    `(Leadership: ${leadershipWomen}, Non-Leadership: ${nonManagerialWomen})\n\n` +
+                    `❌ Women in all positions must equal Total Female!\n\n` +
+                    `You cannot proceed until numbers match.`,
+                    'error'
+                );
+                return false;
+            }
+            
+            if (totalMenInPositions !== totalMale) {
+                showNotification(
+                    `⚠️ MALE COUNT MISMATCH!\n\n` +
+                    `Total Male Employees (from Section B): ${totalMale}\n` +
+                    `Men in Positions (Section E): ${totalMenInPositions}\n` +
+                    `(Leadership: ${leadershipMen}, Non-Leadership: ${nonManagerialMen})\n\n` +
+                    `❌ Men in all positions must equal Total Male!\n\n` +
+                    `You cannot proceed until numbers match.`,
+                    'error'
+                );
+                return false;
+            }
+            
+            return true;
         }
 
         function previousSection() {
@@ -2590,34 +2784,53 @@
         // SIGNATURE PAD FUNCTIONS
         // ============================================
         function initializeSignaturePads() {
+            // Check if SignaturePad library is available
+            if (typeof SignaturePad === 'undefined') {
+                console.warn('SignaturePad library not loaded - signatures will be disabled');
+                // Hide signature fields or show a message
+                const signatureContainers = document.querySelectorAll('.signature-container');
+                signatureContainers.forEach(container => {
+                    const note = document.createElement('p');
+                    note.style.color = '#dc3545';
+                    note.style.fontStyle = 'italic';
+                    note.textContent = 'Note: Signature feature requires internet connection. You can still submit the form without signature.';
+                    container.appendChild(note);
+                });
+                return;
+            }
+            
             const canvases = document.querySelectorAll('.signature-canvas');
             
             canvases.forEach(canvas => {
                 const fieldName = canvas.getAttribute('data-field');
                 
-                // Set canvas size
-                const container = canvas.parentElement;
-                canvas.width = container.offsetWidth - 20;
-                canvas.height = 150;
-                
-                // Initialize SignaturePad
-                const signaturePad = new SignaturePad(canvas, {
-                    backgroundColor: 'rgb(255, 255, 255)',
-                    penColor: 'rgb(0, 0, 0)',
-                    minWidth: 1,
-                    maxWidth: 3
-                });
-                
-                // Store reference
-                state.signaturePads[fieldName] = signaturePad;
-                
-                // Update hidden input when signature changes
-                signaturePad.addEventListener('endStroke', () => {
-                    const hiddenInput = document.getElementById(fieldName);
-                    if (hiddenInput) {
-                        hiddenInput.value = signaturePad.toDataURL();
-                    }
-                });
+                try {
+                    // Set canvas size
+                    const container = canvas.parentElement;
+                    canvas.width = container.offsetWidth - 20;
+                    canvas.height = 150;
+                    
+                    // Initialize SignaturePad
+                    const signaturePad = new SignaturePad(canvas, {
+                        backgroundColor: 'rgb(255, 255, 255)',
+                        penColor: 'rgb(0, 0, 0)',
+                        minWidth: 1,
+                        maxWidth: 3
+                    });
+                    
+                    // Store reference
+                    state.signaturePads[fieldName] = signaturePad;
+                    
+                    // Update hidden input when signature changes
+                    signaturePad.addEventListener('endStroke', () => {
+                        const hiddenInput = document.getElementById(fieldName);
+                        if (hiddenInput) {
+                            hiddenInput.value = signaturePad.toDataURL();
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error initializing signature pad:', error);
+                }
             });
         }
 
@@ -2780,6 +2993,12 @@
         async function openAnalysisModal() {
             // Check if logged in
             if (!checkAdminLogin()) {
+                return;
+            }
+            
+            // Check if Chart.js is available
+            if (typeof Chart === 'undefined') {
+                showNotification('Analysis dashboard requires internet connection to load Chart.js library. Please go online and try again.', 'error');
                 return;
             }
             
@@ -3197,7 +3416,29 @@
             });
         }
 
-        init();
+        // ============================================
+        // SAFE INITIALIZATION - WORKS OFFLINE
+        // ============================================
+        
+        // Wait for the page to fully load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', safeInit);
+        } else {
+            safeInit();
+        }
+        
+        function safeInit() {
+            try {
+                init();
+                updateOnlineStatus();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                // Even if there's an error, still try to show the form
+                showMainContent();
+                setupEventListeners();
+                generateFormSections();
+            }
+        }
     </script>
 </body>
 </html>
