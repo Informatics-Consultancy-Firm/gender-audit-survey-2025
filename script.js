@@ -364,7 +364,7 @@ function generateFormSections() {
                 html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
             } else if (type === 'number') {
                 html += `<input type="number" class="form-input" name="${fieldName}" id="${fieldName}" min="0" step="1" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
-                html += `<div class="field-error" id="error_${fieldName}">Please enter a valid number</div>`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
             } else if (type === 'textarea') {
                 html += `<textarea class="form-textarea" name="${fieldName}" id="${fieldName}" rows="4" ${required ? 'required' : ''} data-field-name="${fieldName}"></textarea>`;
                 html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
@@ -593,7 +593,7 @@ function validateEmployeeNumbersRealTime() {
                 femaleInput.classList.remove('error');
                 const errorDiv = document.getElementById('error_total_female_employees');
                 if (errorDiv) {
-                    errorDiv.textContent = 'Please enter a valid number';
+                    errorDiv.textContent = 'This field is required';
                     errorDiv.classList.remove('show');
                 }
             }
@@ -602,9 +602,115 @@ function validateEmployeeNumbersRealTime() {
                 maleInput.classList.remove('error');
                 const errorDiv = document.getElementById('error_total_male_employees');
                 if (errorDiv) {
-                    errorDiv.textContent = 'Please enter a valid number';
+                    errorDiv.textContent = 'This field is required';
                     errorDiv.classList.remove('show');
                 }
+            }
+        }
+    }
+    
+    // Validate Section E (positions) if we're in that section
+    if (state.currentSection === 3 && totalEmployees > 0) {
+        const leadershipWomen = parseInt(document.getElementById('leadership_women')?.value) || 0;
+        const leadershipMen = parseInt(document.getElementById('leadership_men')?.value) || 0;
+        const nonManagerialWomen = parseInt(document.getElementById('non_managerial_women')?.value) || 0;
+        const nonManagerialMen = parseInt(document.getElementById('non_managerial_men')?.value) || 0;
+        
+        const positionTotal = leadershipWomen + leadershipMen + nonManagerialWomen + nonManagerialMen;
+        
+        // Check if all position fields have values
+        const allFieldsFilled = document.getElementById('leadership_women')?.value !== '' &&
+                               document.getElementById('leadership_men')?.value !== '' &&
+                               document.getElementById('non_managerial_women')?.value !== '' &&
+                               document.getElementById('non_managerial_men')?.value !== '';
+        
+        if (allFieldsFilled) {
+            if (positionTotal !== totalEmployees) {
+                // Show error on all position fields
+                const positionFields = ['leadership_women', 'leadership_men', 'non_managerial_women', 'non_managerial_men'];
+                positionFields.forEach(fieldId => {
+                    const input = document.getElementById(fieldId);
+                    if (input) {
+                        input.classList.add('error');
+                        const errorDiv = document.getElementById(`error_${fieldId}`);
+                        if (errorDiv) {
+                            errorDiv.textContent = `Total positions (${positionTotal}) must equal total employees (${totalEmployees})`;
+                            errorDiv.classList.add('show');
+                        }
+                    }
+                });
+            } else {
+                // Clear errors on all position fields
+                const positionFields = ['leadership_women', 'leadership_men', 'non_managerial_women', 'non_managerial_men'];
+                positionFields.forEach(fieldId => {
+                    const input = document.getElementById(fieldId);
+                    if (input) {
+                        input.classList.remove('error');
+                        const errorDiv = document.getElementById(`error_${fieldId}`);
+                        if (errorDiv) {
+                            errorDiv.textContent = 'This field is required';
+                            errorDiv.classList.remove('show');
+                        }
+                    }
+                });
+            }
+            
+            // Also check gender breakdown in positions
+            const totalWomenInPositions = leadershipWomen + nonManagerialWomen;
+            const totalMenInPositions = leadershipMen + nonManagerialMen;
+            
+            if (totalWomenInPositions !== totalFemale) {
+                const womenFields = ['leadership_women', 'non_managerial_women'];
+                womenFields.forEach(fieldId => {
+                    const input = document.getElementById(fieldId);
+                    if (input) {
+                        input.classList.add('error');
+                        const errorDiv = document.getElementById(`error_${fieldId}`);
+                        if (errorDiv) {
+                            errorDiv.textContent = `Total women in positions (${totalWomenInPositions}) must equal total female employees (${totalFemale})`;
+                            errorDiv.classList.add('show');
+                        }
+                    }
+                });
+            } else {
+                const womenFields = ['leadership_women', 'non_managerial_women'];
+                womenFields.forEach(fieldId => {
+                    const input = document.getElementById(fieldId);
+                    if (input && !input.classList.contains('error')) {
+                        const errorDiv = document.getElementById(`error_${fieldId}`);
+                        if (errorDiv) {
+                            errorDiv.textContent = 'This field is required';
+                            errorDiv.classList.remove('show');
+                        }
+                    }
+                });
+            }
+            
+            if (totalMenInPositions !== totalMale) {
+                const menFields = ['leadership_men', 'non_managerial_men'];
+                menFields.forEach(fieldId => {
+                    const input = document.getElementById(fieldId);
+                    if (input) {
+                        input.classList.add('error');
+                        const errorDiv = document.getElementById(`error_${fieldId}`);
+                        if (errorDiv) {
+                            errorDiv.textContent = `Total men in positions (${totalMenInPositions}) must equal total male employees (${totalMale})`;
+                            errorDiv.classList.add('show');
+                        }
+                    }
+                });
+            } else {
+                const menFields = ['leadership_men', 'non_managerial_men'];
+                menFields.forEach(fieldId => {
+                    const input = document.getElementById(fieldId);
+                    if (input && !input.classList.contains('error')) {
+                        const errorDiv = document.getElementById(`error_${fieldId}`);
+                        if (errorDiv) {
+                            errorDiv.textContent = 'This field is required';
+                            errorDiv.classList.remove('show');
+                        }
+                    }
+                });
             }
         }
     }
@@ -730,6 +836,11 @@ function nextSection() {
                 const input = document.getElementById(id);
                 if (input) {
                     input.classList.add('error');
+                    const errorDiv = document.getElementById(`error_${id}`);
+                    if (errorDiv) {
+                        errorDiv.textContent = `Total positions must equal ${totalEmployees}`;
+                        errorDiv.classList.add('show');
+                    }
                     if (!firstInvalidField) {
                         firstInvalidField = input;
                     }
