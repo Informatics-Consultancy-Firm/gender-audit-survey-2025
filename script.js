@@ -1757,8 +1757,9 @@ function closeAnalysisModal() {
 function renderAnalysisDashboard(data) {
     const body = document.getElementById('analysisBody');
     
-    // Create dashboard HTML (implementation similar to original)
+    // Create dashboard HTML
     let html = `
+        <!-- KEY STATISTICS -->
         <div class="dashboard-grid">
             <div class="stat-card">
                 <div class="stat-label">TOTAL SUBMISSIONS</div>
@@ -1781,9 +1782,355 @@ function renderAnalysisDashboard(data) {
                 <div class="stat-sublabel">${data.leadershipFemale} out of ${data.totalLeadership} positions</div>
             </div>
         </div>
+
+        <!-- MEDIA TYPE DISTRIBUTION -->
+        <div class="chart-container">
+            <div class="chart-title">MEDIA TYPE DISTRIBUTION</div>
+            <canvas id="mediaTypeChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- REGIONAL DISTRIBUTION -->
+        <div class="chart-container">
+            <div class="chart-title">REGIONAL DISTRIBUTION</div>
+            <canvas id="regionalChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- DISTRICT DISTRIBUTION -->
+        <div class="chart-container">
+            <div class="chart-title">DISTRICT DISTRIBUTION</div>
+            <canvas id="districtChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- WORKFORCE GENDER COMPOSITION -->
+        <div class="chart-container">
+            <div class="chart-title">WORKFORCE GENDER COMPOSITION</div>
+            <canvas id="genderChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- LEADERSHIP REPRESENTATION -->
+        <div class="chart-container">
+            <div class="chart-title">LEADERSHIP REPRESENTATION BY GENDER</div>
+            <canvas id="leadershipChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- DEPARTMENTAL DISTRIBUTION -->
+        <div class="chart-container">
+            <div class="chart-title">GENDER DISTRIBUTION BY DEPARTMENT</div>
+            <canvas id="departmentChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- BARRIERS TO ENTRY -->
+        <div class="chart-container">
+            <div class="chart-title">BARRIERS WOMEN FACE AT ENTRY LEVEL</div>
+            <canvas id="barriersChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- ATTRITION REASONS -->
+        <div class="chart-container">
+            <div class="chart-title">REASONS FOR WOMEN LEAVING</div>
+            <canvas id="attritionChart" class="chart-canvas"></canvas>
+        </div>
     `;
     
     body.innerHTML = html;
+    
+    // Render charts
+    setTimeout(() => {
+        renderMediaTypeChart(data.mediaTypes);
+        renderRegionalChart(data.regions);
+        renderDistrictChart(data.districts);
+        renderGenderChart(data);
+        renderLeadershipChart(data);
+        renderDepartmentChart(data);
+        renderBarriersChart(data.barriers);
+        renderAttritionChart(data.attritionReasons);
+    }, 100);
+}
+
+function renderMediaTypeChart(mediaTypes) {
+    const ctx = document.getElementById('mediaTypeChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(mediaTypes),
+            datasets: [{
+                label: 'Number of Media Houses',
+                data: Object.values(mediaTypes),
+                backgroundColor: '#004080',
+                borderColor: '#004080',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderRegionalChart(regions) {
+    const ctx = document.getElementById('regionalChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(regions),
+            datasets: [{
+                data: Object.values(regions),
+                backgroundColor: [
+                    '#004080',
+                    '#0056b3',
+                    '#17a2b8',
+                    '#28a745',
+                    '#ffc107'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+}
+
+function renderDistrictChart(districts) {
+    const ctx = document.getElementById('districtChart');
+    if (!ctx) return;
+
+    // Sort districts alphabetically
+    const sortedDistricts = Object.keys(districts).sort();
+    const sortedData = sortedDistricts.map(d => districts[d]);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: sortedDistricts,
+            datasets: [{
+                label: 'Number of Media Houses',
+                data: sortedData,
+                backgroundColor: '#17a2b8',
+                borderColor: '#17a2b8',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderGenderChart(data) {
+    const ctx = document.getElementById('genderChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Female Employees', 'Male Employees'],
+            datasets: [{
+                data: [data.totalFemale, data.totalMale],
+                backgroundColor: ['#dc3545', '#004080'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function renderLeadershipChart(data) {
+    const ctx = document.getElementById('leadershipChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Leadership Positions', 'Non-Leadership Positions'],
+            datasets: [{
+                label: 'Women',
+                data: [data.leadershipFemale, data.nonLeadershipFemale],
+                backgroundColor: '#dc3545',
+                borderWidth: 1
+            }, {
+                label: 'Men',
+                data: [data.leadershipMale, data.nonLeadershipMale],
+                backgroundColor: '#004080',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function renderDepartmentChart(data) {
+    const ctx = document.getElementById('departmentChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Technical Unit', 'Operations/Admin/HR', 'Newsroom/Field'],
+            datasets: [{
+                label: 'Women',
+                data: [data.technicalFemale, data.operationsFemale, data.newsroomFemale],
+                backgroundColor: '#dc3545',
+                borderWidth: 1
+            }, {
+                label: 'Men',
+                data: [data.technicalMale, data.operationsMale, data.newsroomMale],
+                backgroundColor: '#004080',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function renderBarriersChart(barriers) {
+    const ctx = document.getElementById('barriersChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(barriers),
+            datasets: [{
+                label: 'Number of Organizations',
+                data: Object.values(barriers),
+                backgroundColor: '#ffc107',
+                borderColor: '#ffc107',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderAttritionChart(reasons) {
+    const ctx = document.getElementById('attritionChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(reasons),
+            datasets: [{
+                label: 'Number of Organizations',
+                data: Object.values(reasons),
+                backgroundColor: '#dc3545',
+                borderColor: '#dc3545',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Close modals when clicking outside
