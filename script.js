@@ -1,0 +1,1698 @@
+// ============================================
+// CONFIGURATION
+// ============================================
+const CONFIG = {
+    SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzs_hVlsEQAu_4qeOaZUTjS_cnH3NR22ecQ8QUu5Zw_z8WpOzjnoMLo8Tm-hgQnohQ_zw/exec',
+    GOOGLE_SHEET_URL: 'https://docs.google.com/spreadsheets/d/1tumwvxOoToPYDPdpXLyGYaiT2kbfN6Vw_HBd-8t6IAA/edit?gid=353413478#gid=353413478',
+    LOGIN_USERNAME: 'bbc',
+    LOGIN_PASSWORD: 'bbc',
+    SHEETS: {
+        SURVEY_DATA: 'SURVEY_DATA',
+        SUMMARY: 'SUMMARY_REPORT'
+    }
+};
+
+// ============================================
+// REGION-DISTRICT MAPPING
+// ============================================
+const REGION_DISTRICT_MAP = {
+    'Eastern Region': ['Kailahun District', 'Kenema District', 'Kono District'],
+    'Northern Region': ['Bombali District', 'Falaba District', 'Koinadugu District', 'Tonkolili District'],
+    'North West Region': ['Kambia District', 'Karene District', 'Port Loko District'],
+    'Southern Region': ['Bo District', 'Bonthe District', 'Moyamba District', 'Pujehun District'],
+    'Western Area': ['Western Area Urban District', 'Western Area Rural District']
+};
+
+// ============================================
+// FORM SECTIONS DEFINITION
+// ============================================
+const FORM_SECTIONS = {
+    'Section A: Media Institution Profile': {
+        description: 'Basic information about the media institution',
+        fields: {
+            media_house_name: { label: 'Name of Media House', type: 'text' },
+            media_type: { 
+                label: 'Type of Media', 
+                type: 'checkbox',
+                options: ['Print', 'Radio', 'Television', 'Online/Digital']
+            },
+            region: { 
+                label: 'Region', 
+                type: 'select',
+                options: Object.keys(REGION_DISTRICT_MAP)
+            },
+            district: { 
+                label: 'District', 
+                type: 'select',
+                options: [],
+                cascadeFrom: 'region'
+            },
+            owner_gender: { 
+                label: 'Gender identity of the owner of the media institution', 
+                type: 'radio',
+                options: ['Male', 'Female', "Don't know"]
+            },
+            year_established: { 
+                label: 'When was the media institution established?', 
+                type: 'radio',
+                options: ['6 months ago', '1-2 years ago', '3-4 years ago', '5-6 years ago', '7+ years']
+            }
+        }
+    },
+    'Section B: Workforce Gender Composition': {
+        description: 'Employee numbers and gender composition',
+        fields: {
+            total_employees: { label: 'Q1. Total number of employees', type: 'number' },
+            total_female_employees: { label: 'Q2. Total number of female employees', type: 'number' },
+            total_male_employees: { label: 'Q3. Total number of male employees', type: 'number' },
+            first_female_hire: { 
+                label: 'Q4. When did your organisation first hire a female staff?', 
+                type: 'radio',
+                options: ['Six months ago', 'One year ago', 'Two years ago', 'Three years ago', 'Four years ago', 'Five years +']
+            }
+        }
+    },
+    'Section E: Representation Across Different Positions': {
+        description: 'Staff distribution across different roles and departments',
+        fields: {
+            leadership_women: { label: 'Q5. Staff in Leadership/Managerial positions - Total number of women', type: 'number' },
+            leadership_men: { label: 'Q5. Staff in Leadership/Managerial positions - Total number of men', type: 'number' },
+            non_managerial_women: { label: 'Q6. Staff in Non-Managerial/Leadership positions - Total number of women', type: 'number' },
+            non_managerial_men: { label: 'Q6. Staff in Non-Managerial/Leadership positions - Total number of men', type: 'number' },
+            technical_women: { label: 'Q7. Technical Unit (Camera team, IT, Graphics, etc.) - Total number of women', type: 'number' },
+            technical_men: { label: 'Q7. Technical Unit (Camera team, IT, Graphics, etc.) - Total number of men', type: 'number' },
+            operations_women: { label: 'Q8. Operations/Administration/HR/Finance Unit - Total number of women', type: 'number' },
+            operations_men: { label: 'Q8. Operations/Administration/HR/Finance Unit - Total number of men', type: 'number' },
+            newsroom_women: { label: 'Q9. Newsroom/Field/Reporting Unit - Total number of women', type: 'number' },
+            newsroom_men: { label: 'Q9. Newsroom/Field/Reporting Unit - Total number of men', type: 'number' }
+        }
+    },
+    'Section C: Entry and Retention': {
+        description: 'Recruitment and retention of women employees',
+        fields: {
+            women_recruited_12months: { 
+                label: 'Q10. How many women were recruited into your organization in the last 12 months?', 
+                type: 'radio',
+                options: ['None', '1–2', '3–5', '6–10', 'More than 10', "Don't know"]
+            },
+            women_retained_3years: { 
+                label: 'Q11. How many women have remained in your organization for more than 3 years?', 
+                type: 'radio',
+                options: ['None', '1–2', '3–5', '6–10', 'More than 10', "Don't know"]
+            },
+            women_face_barriers: { 
+                label: 'Q12. Do women face barriers to be recruited in your institution?', 
+                type: 'radio',
+                options: ['Yes', 'No']
+            },
+            entry_barriers: { 
+                label: 'Q13. What barriers do women face at entry level? (Select all that apply)', 
+                type: 'checkbox',
+                options: [
+                    'Women hardly apply',
+                    'Lack of mentorship/training opportunities',
+                    'Limited job openings',
+                    'Social expectations',
+                    'Family Pressure',
+                    'Lower starting pay compared to men',
+                    'Other'
+                ],
+                required: false,
+                conditional: 'women_face_barriers',
+                conditionalValue: 'Yes'
+            },
+            entry_barriers_other: { label: 'If Other, Please Specify', type: 'text', required: false },
+            equal_retention: { 
+                label: 'Q14. Do women journalists in your media institution have equal chances of being retained compared to men?', 
+                type: 'radio',
+                options: ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree']
+            }
+        }
+    },
+    'Section D: Attrition of Women': {
+        description: 'Departure patterns and reasons for women leaving',
+        fields: {
+            women_left_12months: { 
+                label: 'Q15. In the last 12 months, how many women employees have left your institution?', 
+                type: 'radio',
+                options: ['None', '1–2', '3–5', '6–10', 'More than 10', "Don't know"]
+            },
+            departure_reasons: { 
+                label: 'Q16. What were the main reasons for their departure? (Select all that apply)', 
+                type: 'checkbox',
+                options: [
+                    'Harassment',
+                    'Discrimination',
+                    'Lack of career growth opportunities',
+                    'Low pay or poor benefits',
+                    'Family responsibilities (e.g., childcare, household duties)',
+                    'Unsafe working conditions (e.g., field assignments, lack of social security - NASSIT, long working hours, lack of medical insurance)',
+                    'Better opportunities elsewhere',
+                    'Organizational restructuring or layoffs',
+                    'Other'
+                ],
+                required: false
+            },
+            departure_reasons_other: { label: 'If Other, Please Specify', type: 'text', required: false },
+            career_stage_departure: { 
+                label: 'Q17. At what stage of their career did most women leave your media institution?', 
+                type: 'radio',
+                options: ['Entry-level', 'Mid-level', 'Senior-level', "Don't know"],
+                required: false
+            },
+            average_stay_duration: { 
+                label: 'Q18. How long, on average, do women stay before leaving your media institution?', 
+                type: 'radio',
+                options: ['Less than 1 year', '1–2 years', '3–5 years', 'More than 5 years', "Don't know"],
+                required: false
+            },
+            higher_attrition_rate: { 
+                label: 'Q19. Women leave at a higher rate than men in your media institution.', 
+                type: 'radio',
+                options: ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree'],
+                required: false
+            },
+            attrition_impact: { 
+                label: 'Q20. What impact does attrition of women have on your media institution? (Select all that apply)', 
+                type: 'checkbox',
+                options: [
+                    'Loss of skilled staff',
+                    'Reduced diversity in reporting',
+                    'Increased recruitment costs',
+                    'Negative impact on organizational reputation',
+                    'No significant impact',
+                    'Other'
+                ],
+                required: false
+            },
+            attrition_impact_other: { label: 'If Other, Please Specify', type: 'text', required: false }
+        }
+    },
+    'Respondent Information & Signature': {
+        description: 'Information about the person completing this survey',
+        fields: {
+            respondent_name: { label: 'Name of Respondent', type: 'text' },
+            respondent_position: { label: 'Position/Title', type: 'text' },
+            respondent_contact: { label: 'Contact Number', type: 'tel' },
+            respondent_email: { label: 'Email Address', type: 'email', required: false },
+            survey_date: { label: 'Date of Survey', type: 'date' },
+            respondent_signature: { label: 'Signature', type: 'signature' },
+            gps_location: { label: 'GPS Location (Auto-captured)', type: 'gps', required: false }
+        }
+    }
+};
+
+// ============================================
+// STATE
+// ============================================
+const state = {
+    pendingSubmissions: [],
+    drafts: [],
+    isOnline: navigator.onLine,
+    currentSection: 1,
+    totalSections: 0,
+    signaturePads: {},
+    gpsLocation: null,
+    formStatus: 'draft',
+    currentDraftId: null,
+    currentDraftName: null,
+    gpsAttempted: false
+};
+
+// ============================================
+// INITIALIZATION
+// ============================================
+function init() {
+    // Load pending submissions
+    const savedPending = localStorage.getItem('pendingSubmissions');
+    if (savedPending) {
+        try {
+            state.pendingSubmissions = JSON.parse(savedPending);
+        } catch (e) {
+            state.pendingSubmissions = [];
+        }
+    }
+
+    // Load drafts
+    const savedDrafts = localStorage.getItem('formDrafts');
+    if (savedDrafts) {
+        try {
+            state.drafts = JSON.parse(savedDrafts);
+        } catch (e) {
+            state.drafts = [];
+        }
+    }
+
+    // Initialize main content directly
+    updateOnlineStatus();
+    updatePendingCount();
+    updateDraftCount();
+    
+    setupEventListeners();
+    generateFormSections();
+    
+    // Start GPS capture automatically
+    setTimeout(() => {
+        captureGPSAutomatically();
+    }, 1000);
+    
+    // Sync pending submissions if online
+    if (state.isOnline && state.pendingSubmissions.length > 0) {
+        syncPendingSubmissions();
+    }
+}
+
+function generateFormSections() {
+    const container = document.getElementById('dynamicSections');
+    let html = '';
+    let sectionNum = 1;
+    
+    const sectionKeys = Object.keys(FORM_SECTIONS);
+    state.totalSections = sectionKeys.length;
+    
+    sectionKeys.forEach((sectionTitle, index) => {
+        const section = FORM_SECTIONS[sectionTitle];
+        const isLastSection = index === sectionKeys.length - 1;
+        
+        html += `
+            <div class="form-section ${sectionNum === 1 ? 'active' : ''}" data-section="${sectionNum}">
+                <div class="section-header">
+                    <h2 class="section-title">${sectionTitle.toUpperCase()}</h2>
+                    <p class="section-description">${section.description}</p>
+                </div>
+        `;
+        
+        // Generate fields
+        const fields = Object.entries(section.fields);
+        fields.forEach(([fieldName, fieldConfig]) => {
+            const label = fieldConfig.label;
+            const type = fieldConfig.type || 'text';
+            const required = fieldConfig.required !== false;
+            const conditional = fieldConfig.conditional;
+            const conditionalValue = fieldConfig.conditionalValue;
+            const cascadeFrom = fieldConfig.cascadeFrom;
+            
+            // Add conditional styling if field is conditional
+            const conditionalClass = conditional ? 'conditional-field' : '';
+            const conditionalData = conditional ? `data-conditional="${conditional}" data-conditional-value="${conditionalValue}"` : '';
+            
+            html += `<div class="form-group ${conditionalClass}" ${conditionalData} id="group_${fieldName}">`;
+            html += `<label class="form-label">${label.toUpperCase()} ${required ? '<span class="required">*</span>' : ''}</label>`;
+            
+            if (type === 'signature') {
+                // Signature pad
+                html += `
+                    <div class="signature-container">
+                        <canvas class="signature-canvas" id="${fieldName}_canvas" data-field="${fieldName}"></canvas>
+                        <div class="signature-controls">
+                            <button type="button" class="signature-btn" onclick="clearSignature('${fieldName}')">CLEAR</button>
+                        </div>
+                    </div>
+                    <input type="hidden" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''}>
+                `;
+            } else if (type === 'gps') {
+                // GPS Location (auto-captured)
+                html += `
+                    <div class="gps-container">
+                        <div class="gps-status">
+                            <div class="gps-icon" id="gps_icon"></div>
+                            <div>
+                                <div class="gps-info" id="gps_status">Automatically capturing GPS location...</div>
+                                <div class="gps-coords" id="gps_coords"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="gps_latitude" id="gps_latitude">
+                    <input type="hidden" name="gps_longitude" id="gps_longitude">
+                    <input type="hidden" name="gps_accuracy" id="gps_accuracy">
+                    <input type="hidden" name="gps_timestamp" id="gps_timestamp">
+                `;
+            } else if (type === 'radio') {
+                html += '<div class="radio-group">';
+                fieldConfig.options.forEach((option, idx) => {
+                    html += `
+                        <div class="radio-item">
+                            <input type="radio" name="${fieldName}" id="${fieldName}_${idx}" value="${option}" ${required ? 'required' : ''} data-field-name="${fieldName}">
+                            <label for="${fieldName}_${idx}">${option}</label>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                html += `<div class="field-error" id="error_${fieldName}">Please select an option</div>`;
+            } else if (type === 'checkbox') {
+                html += '<div class="checkbox-group">';
+                fieldConfig.options.forEach((option, idx) => {
+                    html += `
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="${fieldName}" id="${fieldName}_${idx}" value="${option}">
+                            <label for="${fieldName}_${idx}">${option}</label>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            } else if (type === 'select' && fieldConfig.options) {
+                const isDisabled = cascadeFrom ? 'disabled' : '';
+                html += `<select class="form-select" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} ${isDisabled} data-cascade-from="${cascadeFrom || ''}" data-field-name="${fieldName}">`;
+                html += '<option value="">Select...</option>';
+                fieldConfig.options.forEach(option => {
+                    html += `<option value="${option}">${option}</option>`;
+                });
+                html += '</select>';
+                html += `<div class="field-error" id="error_${fieldName}">Please select an option</div>`;
+            } else if (type === 'date') {
+                html += `<input type="date" class="form-input" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
+            } else if (type === 'number') {
+                html += `<input type="number" class="form-input" name="${fieldName}" id="${fieldName}" min="0" step="1" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">Please enter a valid number</div>`;
+            } else if (type === 'textarea') {
+                html += `<textarea class="form-textarea" name="${fieldName}" id="${fieldName}" rows="4" ${required ? 'required' : ''} data-field-name="${fieldName}"></textarea>`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
+            } else if (type === 'tel') {
+                html += `<input type="tel" class="form-input" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
+            } else if (type === 'email') {
+                html += `<input type="email" class="form-input" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">Please enter a valid email</div>`;
+            } else {
+                html += `<input type="text" class="form-input" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
+            }
+            
+            html += '</div>';
+        });
+        
+        // Navigation buttons
+        html += '<div class="navigation-buttons">';
+        
+        if (sectionNum > 1) {
+            html += '<button type="button" class="btn-nav btn-back" onclick="previousSection()">← BACK</button>';
+        }
+        
+        // Always show Save as Draft button
+        html += '<button type="button" class="btn-nav btn-draft" onclick="showDraftNameModal()">💾 SAVE DRAFT</button>';
+        
+        if (isLastSection) {
+            // Last section: Show Finalize and Submit buttons
+            html += '<button type="button" class="btn-nav btn-finalize" id="finalizeBtn" onclick="finalizeForm()">✓ FINALIZE</button>';
+            html += '<button type="submit" class="btn-nav btn-submit" id="submitBtn" disabled>📤 SUBMIT</button>';
+        } else {
+            html += '<button type="button" class="btn-nav btn-next" onclick="nextSection()">NEXT →</button>';
+        }
+        
+        html += '</div></div>';
+        
+        sectionNum++;
+    });
+    
+    container.innerHTML = html;
+    updateProgress();
+    
+    // Initialize signature pads and other features after a short delay
+    setTimeout(() => {
+        initializeSignaturePads();
+        setupConditionalFields();
+        setupCascadingDropdowns();
+        setupRealTimeValidation();
+    }, 100);
+}
+
+function setupConditionalFields() {
+    // Find all conditional fields
+    const conditionalFields = document.querySelectorAll('.conditional-field');
+    
+    conditionalFields.forEach(field => {
+        const parentFieldName = field.getAttribute('data-conditional');
+        const expectedValue = field.getAttribute('data-conditional-value');
+        
+        // Find parent radio buttons
+        const parentRadios = document.querySelectorAll(`input[name="${parentFieldName}"]`);
+        
+        parentRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === expectedValue) {
+                    field.classList.add('show');
+                } else {
+                    field.classList.remove('show');
+                    // Clear any selections in the conditional field
+                    const checkboxes = field.querySelectorAll('input[type="checkbox"]');
+                    checkboxes.forEach(cb => cb.checked = false);
+                    const textInputs = field.querySelectorAll('input[type="text"], textarea');
+                    textInputs.forEach(input => input.value = '');
+                }
+            });
+        });
+        
+        // Check initial state
+        const checkedRadio = document.querySelector(`input[name="${parentFieldName}"]:checked`);
+        if (checkedRadio && checkedRadio.value === expectedValue) {
+            field.classList.add('show');
+        }
+    });
+}
+
+function setupCascadingDropdowns() {
+    // Setup Region -> District cascade
+    const regionSelect = document.getElementById('region');
+    const districtSelect = document.getElementById('district');
+    
+    if (regionSelect && districtSelect) {
+        regionSelect.addEventListener('change', function() {
+            const selectedRegion = this.value;
+            
+            // Clear district selection
+            districtSelect.innerHTML = '<option value="">Select...</option>';
+            
+            if (selectedRegion && REGION_DISTRICT_MAP[selectedRegion]) {
+                // Enable district dropdown
+                districtSelect.disabled = false;
+                
+                // Populate districts for selected region
+                REGION_DISTRICT_MAP[selectedRegion].forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district;
+                    option.textContent = district;
+                    districtSelect.appendChild(option);
+                });
+            } else {
+                // Disable district dropdown if no region selected
+                districtSelect.disabled = true;
+            }
+            
+            // Clear any error on district
+            const districtError = document.getElementById('error_district');
+            if (districtError) {
+                districtError.classList.remove('show');
+            }
+            districtSelect.classList.remove('error');
+        });
+    }
+}
+
+function setupRealTimeValidation() {
+    // Add blur validation for all required number inputs in Section B and E
+    const numberInputs = document.querySelectorAll('input[type="number"][required]');
+    
+    numberInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateEmployeeNumbersRealTime();
+        });
+        
+        input.addEventListener('input', function() {
+            // Clear error styling when user starts typing
+            this.classList.remove('error');
+            const errorDiv = document.getElementById(`error_${this.id}`);
+            if (errorDiv) {
+                errorDiv.classList.remove('show');
+            }
+        });
+    });
+    
+    // Add validation for all required fields on blur
+    const allInputs = document.querySelectorAll('input[required], select[required], textarea[required]');
+    allInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.type !== 'radio' && this.type !== 'number') {
+                validateField(this);
+            }
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.type !== 'radio') {
+                this.classList.remove('error');
+                const fieldName = this.getAttribute('data-field-name') || this.id;
+                const errorDiv = document.getElementById(`error_${fieldName}`);
+                if (errorDiv) {
+                    errorDiv.classList.remove('show');
+                }
+            }
+        });
+    });
+}
+
+function validateField(field) {
+    const fieldName = field.getAttribute('data-field-name') || field.id;
+    const errorDiv = document.getElementById(`error_${fieldName}`);
+    
+    if (!field.value || field.value.trim() === '') {
+        field.classList.add('error');
+        if (errorDiv) {
+            errorDiv.classList.add('show');
+        }
+        return false;
+    } else {
+        field.classList.remove('error');
+        if (errorDiv) {
+            errorDiv.classList.remove('show');
+        }
+        return true;
+    }
+}
+
+function validateEmployeeNumbersRealTime() {
+    // Only validate if we're in Section B or E
+    const currentSectionEl = document.querySelector(`.form-section[data-section="${state.currentSection}"]`);
+    if (!currentSectionEl) return;
+    
+    const totalEmployees = parseInt(document.getElementById('total_employees')?.value) || 0;
+    const totalFemale = parseInt(document.getElementById('total_female_employees')?.value) || 0;
+    const totalMale = parseInt(document.getElementById('total_male_employees')?.value) || 0;
+    
+    // Only show errors if all three fields have values
+    if (totalEmployees > 0 && totalFemale >= 0 && totalMale >= 0) {
+        const genderTotal = totalFemale + totalMale;
+        
+        if (genderTotal !== totalEmployees) {
+            // Show inline error
+            const femaleInput = document.getElementById('total_female_employees');
+            const maleInput = document.getElementById('total_male_employees');
+            
+            if (femaleInput) {
+                femaleInput.classList.add('error');
+                const errorDiv = document.getElementById('error_total_female_employees');
+                if (errorDiv) {
+                    errorDiv.textContent = `Female + Male must equal ${totalEmployees}`;
+                    errorDiv.classList.add('show');
+                }
+            }
+            
+            if (maleInput) {
+                maleInput.classList.add('error');
+                const errorDiv = document.getElementById('error_total_male_employees');
+                if (errorDiv) {
+                    errorDiv.textContent = `Female + Male must equal ${totalEmployees}`;
+                    errorDiv.classList.add('show');
+                }
+            }
+        } else {
+            // Clear errors
+            const femaleInput = document.getElementById('total_female_employees');
+            const maleInput = document.getElementById('total_male_employees');
+            
+            if (femaleInput) {
+                femaleInput.classList.remove('error');
+                const errorDiv = document.getElementById('error_total_female_employees');
+                if (errorDiv) {
+                    errorDiv.textContent = 'Please enter a valid number';
+                    errorDiv.classList.remove('show');
+                }
+            }
+            
+            if (maleInput) {
+                maleInput.classList.remove('error');
+                const errorDiv = document.getElementById('error_total_male_employees');
+                if (errorDiv) {
+                    errorDiv.textContent = 'Please enter a valid number';
+                    errorDiv.classList.remove('show');
+                }
+            }
+        }
+    }
+}
+
+function setupEventListeners() {
+    document.getElementById('viewDataBtn').addEventListener('click', handleViewData);
+    document.getElementById('viewAnalysisBtn').addEventListener('click', openAnalysisModal);
+    document.getElementById('viewDraftsBtn').addEventListener('click', openDraftsModal);
+    document.getElementById('dataForm').addEventListener('submit', handleFormSubmit);
+    window.addEventListener('online', handleOnlineEvent);
+    window.addEventListener('offline', handleOfflineEvent);
+    
+    // Add enter key listener for draft name input
+    document.getElementById('draftNameInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            confirmSaveDraft();
+        }
+    });
+}
+
+function nextSection() {
+    const currentSectionEl = document.querySelector(`.form-section[data-section="${state.currentSection}"]`);
+    let isValid = true;
+    let firstInvalidField = null;
+    
+    // Validate all inputs in current section
+    const inputs = currentSectionEl.querySelectorAll('input[required], select[required], textarea[required]');
+    
+    inputs.forEach(input => {
+        if (input.type === 'radio') {
+            const radioGroup = currentSectionEl.querySelectorAll(`input[name="${input.name}"]`);
+            const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+            if (!isChecked) {
+                isValid = false;
+                const fieldName = input.getAttribute('data-field-name') || input.name;
+                const errorDiv = document.getElementById(`error_${fieldName}`);
+                if (errorDiv) {
+                    errorDiv.classList.add('show');
+                }
+                input.closest('.radio-group').style.borderLeft = '4px solid #dc3545';
+                setTimeout(() => {
+                    if (input.closest('.radio-group')) {
+                        input.closest('.radio-group').style.borderLeft = '';
+                    }
+                }, 3000);
+                
+                if (!firstInvalidField) {
+                    firstInvalidField = input;
+                }
+            }
+        } else if (!input.value || input.value.trim() === '') {
+            isValid = false;
+            input.classList.add('error');
+            const fieldName = input.getAttribute('data-field-name') || input.id;
+            const errorDiv = document.getElementById(`error_${fieldName}`);
+            if (errorDiv) {
+                errorDiv.classList.add('show');
+            }
+            
+            if (!firstInvalidField) {
+                firstInvalidField = input;
+            }
+            
+            setTimeout(() => {
+                input.classList.remove('error');
+            }, 3000);
+        }
+    });
+    
+    // Additional validation for Section B (employee numbers)
+    if (state.currentSection === 2) {
+        const totalEmployees = parseInt(document.getElementById('total_employees')?.value) || 0;
+        const totalFemale = parseInt(document.getElementById('total_female_employees')?.value) || 0;
+        const totalMale = parseInt(document.getElementById('total_male_employees')?.value) || 0;
+        const genderTotal = totalFemale + totalMale;
+        
+        if (genderTotal !== totalEmployees) {
+            isValid = false;
+            showNotification(
+                `⚠️ Employee Count Mismatch!\n\n` +
+                `Total Employees: ${totalEmployees}\n` +
+                `Female + Male: ${totalFemale} + ${totalMale} = ${genderTotal}\n\n` +
+                `Please ensure Female + Male equals Total Employees.`,
+                'error'
+            );
+            
+            const femaleInput = document.getElementById('total_female_employees');
+            const maleInput = document.getElementById('total_male_employees');
+            
+            if (femaleInput) {
+                femaleInput.classList.add('error');
+                firstInvalidField = firstInvalidField || femaleInput;
+            }
+            if (maleInput) {
+                maleInput.classList.add('error');
+            }
+        }
+    }
+    
+    // Additional validation for Section E (positions)
+    if (state.currentSection === 3) {
+        const totalEmployees = parseInt(document.getElementById('total_employees')?.value) || 0;
+        const leadershipWomen = parseInt(document.getElementById('leadership_women')?.value) || 0;
+        const leadershipMen = parseInt(document.getElementById('leadership_men')?.value) || 0;
+        const nonManagerialWomen = parseInt(document.getElementById('non_managerial_women')?.value) || 0;
+        const nonManagerialMen = parseInt(document.getElementById('non_managerial_men')?.value) || 0;
+        const positionTotal = leadershipWomen + leadershipMen + nonManagerialWomen + nonManagerialMen;
+        
+        if (positionTotal !== totalEmployees) {
+            isValid = false;
+            showNotification(
+                `⚠️ Position Count Mismatch!\n\n` +
+                `Total Employees: ${totalEmployees}\n` +
+                `Leadership + Non-Leadership: ${positionTotal}\n\n` +
+                `(Leadership: ${leadershipWomen + leadershipMen}, Non-Leadership: ${nonManagerialWomen + nonManagerialMen})\n\n` +
+                `Please ensure all positions add up to Total Employees.`,
+                'error'
+            );
+            
+            const inputs = ['leadership_women', 'leadership_men', 'non_managerial_women', 'non_managerial_men'];
+            inputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.classList.add('error');
+                    if (!firstInvalidField) {
+                        firstInvalidField = input;
+                    }
+                }
+            });
+        }
+    }
+    
+    if (!isValid) {
+        showNotification('Please fill in all required fields correctly', 'error');
+        
+        // Scroll to first invalid field
+        if (firstInvalidField) {
+            firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                firstInvalidField.focus();
+            }, 500);
+        }
+        return;
+    }
+    
+    if (state.currentSection < state.totalSections) {
+        currentSectionEl.classList.remove('active');
+        state.currentSection++;
+        const nextSection = document.querySelector(`.form-section[data-section="${state.currentSection}"]`);
+        if (nextSection) {
+            nextSection.classList.add('active');
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+}
+
+function previousSection() {
+    if (state.currentSection > 1) {
+        document.querySelector(`.form-section[data-section="${state.currentSection}"]`).classList.remove('active');
+        state.currentSection--;
+        document.querySelector(`.form-section[data-section="${state.currentSection}"]`).classList.add('active');
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function updateProgress() {
+    const progress = (state.currentSection / state.totalSections) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+    
+    let statusBadge = '';
+    if (state.formStatus === 'draft') {
+        statusBadge = '<span class="form-status-badge draft">DRAFT</span>';
+    } else if (state.formStatus === 'finalized') {
+        statusBadge = '<span class="form-status-badge finalized">FINALIZED</span>';
+    }
+    
+    document.getElementById('progressText').innerHTML = `SECTION ${state.currentSection} OF ${state.totalSections} ${statusBadge}`;
+}
+
+function handleViewData() {
+    // Check if logged in
+    if (!checkAdminLogin()) {
+        return;
+    }
+    
+    if (CONFIG.GOOGLE_SHEET_URL) {
+        window.open(CONFIG.GOOGLE_SHEET_URL, '_blank');
+    } else {
+        showNotification('Please configure Google Sheet URL in the script', 'error');
+    }
+}
+
+function checkAdminLogin() {
+    const username = prompt('Enter admin username:');
+    const password = prompt('Enter admin password:');
+    
+    if (username === CONFIG.LOGIN_USERNAME && password === CONFIG.LOGIN_PASSWORD) {
+        return true;
+    } else {
+        showNotification('Invalid credentials. Access denied.', 'error');
+        return false;
+    }
+}
+
+function handleOnlineEvent() {
+    state.isOnline = true;
+    updateOnlineStatus();
+    showNotification('Back online - Syncing data...', 'info');
+    syncPendingSubmissions();
+}
+
+function handleOfflineEvent() {
+    state.isOnline = false;
+    updateOnlineStatus();
+    showNotification('You are offline - Data will be saved locally', 'info');
+}
+
+function updateOnlineStatus() {
+    const indicator = document.getElementById('statusIndicator');
+    const text = document.getElementById('statusText');
+    
+    if (state.isOnline) {
+        indicator.className = 'status-indicator online';
+        text.textContent = 'ONLINE';
+    } else {
+        indicator.className = 'status-indicator offline';
+        text.textContent = 'OFFLINE';
+    }
+}
+
+function updatePendingCount() {
+    document.getElementById('pendingCount').textContent = state.pendingSubmissions.length;
+}
+
+function updateDraftCount() {
+    document.getElementById('draftCount').textContent = state.drafts.length;
+}
+
+// ============================================
+// GPS FUNCTIONS - AUTO CAPTURE
+// ============================================
+function captureGPSAutomatically() {
+    // Only attempt once
+    if (state.gpsAttempted) return;
+    state.gpsAttempted = true;
+    
+    const statusIcon = document.getElementById('gps_icon');
+    const statusText = document.getElementById('gps_status');
+    const coordsText = document.getElementById('gps_coords');
+    
+    if (!navigator.geolocation) {
+        if (statusIcon) statusIcon.classList.add('error');
+        if (statusText) statusText.textContent = 'GPS not supported by your browser';
+        return;
+    }
+    
+    // Show loading state
+    if (statusIcon) {
+        statusIcon.classList.add('loading');
+    }
+    if (statusText) statusText.textContent = 'Capturing GPS location automatically...';
+    
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            // Success
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+            const timestamp = new Date(position.timestamp).toISOString();
+            
+            // Store in state
+            state.gpsLocation = {
+                latitude,
+                longitude,
+                accuracy,
+                timestamp
+            };
+            
+            // Update hidden inputs
+            const latInput = document.getElementById('gps_latitude');
+            const lonInput = document.getElementById('gps_longitude');
+            const accInput = document.getElementById('gps_accuracy');
+            const timeInput = document.getElementById('gps_timestamp');
+            
+            if (latInput) latInput.value = latitude;
+            if (lonInput) lonInput.value = longitude;
+            if (accInput) accInput.value = accuracy;
+            if (timeInput) timeInput.value = timestamp;
+            
+            // Update UI
+            if (statusIcon) {
+                statusIcon.classList.remove('loading', 'error');
+                statusIcon.classList.add('success');
+            }
+            if (statusText) statusText.textContent = 'GPS location captured successfully!';
+            if (coordsText) coordsText.textContent = `Lat: ${latitude.toFixed(6)}, Lon: ${longitude.toFixed(6)} (±${Math.round(accuracy)}m)`;
+            
+            console.log('GPS captured:', state.gpsLocation);
+        },
+        (error) => {
+            // Error
+            if (statusIcon) {
+                statusIcon.classList.remove('loading', 'success');
+                statusIcon.classList.add('error');
+            }
+            
+            let errorMessage = 'Failed to capture GPS location (optional)';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = 'GPS permission denied (optional)';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = 'GPS position unavailable (optional)';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = 'GPS request timed out (optional)';
+                    break;
+            }
+            
+            if (statusText) statusText.textContent = errorMessage;
+            console.log('GPS error:', errorMessage);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 120000, // 2 minutes
+            maximumAge: 0
+        }
+    );
+}
+
+// ============================================
+// DRAFT MANAGEMENT
+// ============================================
+function showDraftNameModal() {
+    const modal = document.getElementById('draftNameModal');
+    const input = document.getElementById('draftNameInput');
+    
+    // Set default name if editing existing draft
+    if (state.currentDraftName) {
+        input.value = state.currentDraftName;
+    } else {
+        // Generate default name based on form data
+        const mediaHouse = document.querySelector('[name="media_house_name"]')?.value || '';
+        const surveyDate = document.querySelector('[name="survey_date"]')?.value || '';
+        const defaultName = mediaHouse || surveyDate || 'Unnamed Draft';
+        input.value = defaultName;
+    }
+    
+    modal.classList.add('show');
+    input.focus();
+    input.select();
+}
+
+function cancelDraftName() {
+    const modal = document.getElementById('draftNameModal');
+    modal.classList.remove('show');
+}
+
+function confirmSaveDraft() {
+    const draftName = document.getElementById('draftNameInput').value.trim();
+    
+    if (!draftName) {
+        showNotification('Please enter a name for the draft', 'warning');
+        return;
+    }
+    
+    // Close modal
+    cancelDraftName();
+    
+    // Save draft with the provided name
+    saveAsDraft(draftName);
+}
+
+function saveAsDraft(draftName) {
+    const formData = new FormData(document.getElementById('dataForm'));
+    
+    const data = {
+        draftId: state.currentDraftId || generateDraftId(),
+        draftName: draftName,
+        savedAt: new Date().toISOString(),
+        savedBy: 'surveyor',
+        formStatus: 'draft',
+        currentSection: state.currentSection
+    };
+    
+    for (const [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    
+    // Handle checkbox groups
+    const checkboxGroups = {};
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        if (checkbox.checked) {
+            if (!checkboxGroups[checkbox.name]) {
+                checkboxGroups[checkbox.name] = [];
+            }
+            checkboxGroups[checkbox.name].push(checkbox.value);
+        }
+    });
+    
+    for (const [key, values] of Object.entries(checkboxGroups)) {
+        data[key] = values.join(', ');
+    }
+    
+    // Save signature data
+    Object.keys(state.signaturePads).forEach(fieldName => {
+        const pad = state.signaturePads[fieldName];
+        if (pad && !pad.isEmpty()) {
+            data[fieldName] = pad.toDataURL();
+        }
+    });
+    
+    // Check if updating existing draft
+    const existingIndex = state.drafts.findIndex(d => d.draftId === data.draftId);
+    if (existingIndex !== -1) {
+        state.drafts[existingIndex] = data;
+    } else {
+        state.drafts.push(data);
+    }
+    
+    localStorage.setItem('formDrafts', JSON.stringify(state.drafts));
+    state.currentDraftId = data.draftId;
+    state.currentDraftName = draftName;
+    document.getElementById('draft_id').value = data.draftId;
+    
+    updateDraftCount();
+    showNotification(`Draft "${draftName}" saved successfully!`, 'success');
+}
+
+function generateDraftId() {
+    return 'draft_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+function openDraftsModal() {
+    const modal = document.getElementById('draftsModal');
+    const modalBody = document.getElementById('draftsModalBody');
+    
+    if (state.drafts.length === 0) {
+        modalBody.innerHTML = '<div class="no-drafts">No saved drafts</div>';
+    } else {
+        let html = '';
+        // Sort drafts by savedAt date (newest first)
+        const sortedDrafts = [...state.drafts].sort((a, b) => 
+            new Date(b.savedAt) - new Date(a.savedAt)
+        );
+        
+        sortedDrafts.forEach((draft, index) => {
+            const savedDate = new Date(draft.savedAt).toLocaleString();
+            const draftName = draft.draftName || 'Unnamed Draft';
+            const mediaHouse = draft.media_house_name || '';
+            
+            html += `
+                <div class="draft-item">
+                    <div class="draft-item-header">
+                        <div>
+                            <div class="draft-item-title">${draftName}</div>
+                            ${mediaHouse ? `<div class="draft-item-subtitle">Media House: ${mediaHouse}</div>` : ''}
+                        </div>
+                        <div class="draft-item-date">Saved: ${savedDate}</div>
+                    </div>
+                    <div class="draft-item-actions">
+                        <button class="draft-action-btn load" onclick="loadDraft('${draft.draftId}')">📂 LOAD</button>
+                        <button class="draft-action-btn delete" onclick="deleteDraft('${draft.draftId}')">🗑️ DELETE</button>
+                    </div>
+                </div>
+            `;
+        });
+        modalBody.innerHTML = html;
+    }
+    
+    modal.classList.add('show');
+}
+
+function closeDraftsModal() {
+    document.getElementById('draftsModal').classList.remove('show');
+}
+
+function loadDraft(draftId) {
+    const draft = state.drafts.find(d => d.draftId === draftId);
+    if (!draft) {
+        showNotification('Draft not found', 'error');
+        return;
+    }
+    
+    // Clear form first
+    clearForm(false);
+    
+    // Load draft data
+    state.currentDraftId = draftId;
+    state.currentDraftName = draft.draftName;
+    state.formStatus = draft.formStatus || 'draft';
+    document.getElementById('draft_id').value = draftId;
+    document.getElementById('form_status').value = state.formStatus;
+    
+    // Populate form fields
+    Object.keys(draft).forEach(key => {
+        if (['draftId', 'draftName', 'savedAt', 'savedBy', 'formStatus', 'currentSection'].includes(key)) return;
+        
+        const field = document.querySelector(`[name="${key}"]`);
+        if (field) {
+            if (field.type === 'hidden' && key.includes('signature')) {
+                // Handle signature fields
+                const canvas = document.getElementById(`${key}_canvas`);
+                if (canvas && draft[key]) {
+                    const pad = state.signaturePads[key];
+                    if (pad) {
+                        const img = new Image();
+                        img.onload = () => {
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0);
+                        };
+                        img.src = draft[key];
+                        field.value = draft[key];
+                    }
+                }
+            } else if (field.type === 'radio') {
+                const radio = document.querySelector(`input[name="${key}"][value="${draft[key]}"]`);
+                if (radio) radio.checked = true;
+            } else if (field.type === 'checkbox') {
+                // Handle checkbox groups
+                if (draft[key]) {
+                    const values = draft[key].split(', ');
+                    values.forEach(val => {
+                        const checkbox = document.querySelector(`input[name="${key}"][value="${val}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+            } else {
+                field.value = draft[key];
+                
+                // Trigger change event for cascading dropdowns
+                if (field.tagName === 'SELECT') {
+                    field.dispatchEvent(new Event('change'));
+                }
+            }
+        }
+    });
+    
+    // Go to saved section
+    if (draft.currentSection) {
+        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+        state.currentSection = draft.currentSection;
+        const targetSection = document.querySelector(`.form-section[data-section="${draft.currentSection}"]`);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+    }
+    
+    updateProgress();
+    updateSubmitButton();
+    closeDraftsModal();
+    showNotification(`Draft "${draft.draftName}" loaded successfully!`, 'success');
+}
+
+function deleteDraft(draftId) {
+    const draft = state.drafts.find(d => d.draftId === draftId);
+    const draftName = draft ? draft.draftName : 'this draft';
+    
+    if (!confirm(`Are you sure you want to delete "${draftName}"?`)) return;
+    
+    state.drafts = state.drafts.filter(d => d.draftId !== draftId);
+    localStorage.setItem('formDrafts', JSON.stringify(state.drafts));
+    
+    if (state.currentDraftId === draftId) {
+        state.currentDraftId = null;
+        state.currentDraftName = null;
+        document.getElementById('draft_id').value = '';
+    }
+    
+    updateDraftCount();
+    openDraftsModal(); // Refresh modal
+    showNotification('Draft deleted', 'info');
+}
+
+// ============================================
+// FINALIZE & SUBMIT
+// ============================================
+function finalizeForm() {
+    // Validate all required fields across all sections
+    let isValid = true;
+    let firstInvalidSection = null;
+    
+    document.querySelectorAll('.form-section').forEach((section, index) => {
+        const inputs = section.querySelectorAll('input[required], select[required], textarea[required]');
+        inputs.forEach(input => {
+            if (input.type === 'radio') {
+                const radioGroup = section.querySelectorAll(`input[name="${input.name}"]`);
+                const isChecked = Array.from(radioGroup).some(radio => radio.checked);
+                if (!isChecked && firstInvalidSection === null) {
+                    isValid = false;
+                    firstInvalidSection = index + 1;
+                }
+            } else if (!input.value) {
+                isValid = false;
+                input.classList.add('error');
+                if (firstInvalidSection === null) {
+                    firstInvalidSection = index + 1;
+                }
+            }
+        });
+    });
+    
+    if (!isValid) {
+        showNotification(`Please complete all required fields. Check Section ${firstInvalidSection}`, 'error');
+        // Navigate to first invalid section
+        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+        state.currentSection = firstInvalidSection;
+        document.querySelector(`.form-section[data-section="${firstInvalidSection}"]`).classList.add('active');
+        updateProgress();
+        return;
+    }
+    
+    // Validate employee numbers
+    if (!validateEmployeeNumbers()) {
+        return; // Validation function shows its own notification
+    }
+    
+    state.formStatus = 'finalized';
+    document.getElementById('form_status').value = 'finalized';
+    updateProgress();
+    updateSubmitButton();
+    
+    // Auto-save draft with finalized status
+    if (state.currentDraftName) {
+        saveAsDraft(state.currentDraftName);
+    } else {
+        showDraftNameModal();
+    }
+    
+    showNotification('Form finalized! You can now submit.', 'success');
+}
+
+function validateEmployeeNumbers() {
+    // Get values from form
+    const totalEmployees = parseInt(document.querySelector('[name="total_employees"]')?.value) || 0;
+    const totalFemale = parseInt(document.querySelector('[name="total_female_employees"]')?.value) || 0;
+    const totalMale = parseInt(document.querySelector('[name="total_male_employees"]')?.value) || 0;
+    
+    const leadershipWomen = parseInt(document.querySelector('[name="leadership_women"]')?.value) || 0;
+    const leadershipMen = parseInt(document.querySelector('[name="leadership_men"]')?.value) || 0;
+    const nonManagerialWomen = parseInt(document.querySelector('[name="non_managerial_women"]')?.value) || 0;
+    const nonManagerialMen = parseInt(document.querySelector('[name="non_managerial_men"]')?.value) || 0;
+    
+    // Validation 1: Total Female + Total Male should equal Total Employees
+    const genderTotal = totalFemale + totalMale;
+    if (genderTotal !== totalEmployees) {
+        showNotification(
+            `⚠️ Employee Count Mismatch!\n\n` +
+            `Total Employees: ${totalEmployees}\n` +
+            `Female + Male: ${totalFemale} + ${totalMale} = ${genderTotal}\n\n` +
+            `Please ensure Female + Male equals Total Employees.`,
+            'error'
+        );
+        // Navigate to Section B
+        navigateToSection(2);
+        return false;
+    }
+    
+    // Validation 2: Leadership + Non-Leadership should equal Total Employees
+    const positionTotal = leadershipWomen + leadershipMen + nonManagerialWomen + nonManagerialMen;
+    if (positionTotal !== totalEmployees) {
+        showNotification(
+            `⚠️ Position Count Mismatch!\n\n` +
+            `Total Employees: ${totalEmployees}\n` +
+            `Leadership + Non-Leadership: ${positionTotal}\n\n` +
+            `(Leadership: ${leadershipWomen + leadershipMen}, Non-Leadership: ${nonManagerialWomen + nonManagerialMen})\n\n` +
+            `Please ensure all positions add up to Total Employees.`,
+            'error'
+        );
+        // Navigate to Section E
+        navigateToSection(3);
+        return false;
+    }
+    
+    // Validation 3: Gender breakdown in leadership should match
+    const totalWomenInPositions = leadershipWomen + nonManagerialWomen;
+    
+    if (totalWomenInPositions !== totalFemale) {
+        showNotification(
+            `⚠️ Female Employee Count Mismatch!\n\n` +
+            `Total Female Employees: ${totalFemale}\n` +
+            `Women in Leadership + Non-Leadership: ${totalWomenInPositions}\n\n` +
+            `Please ensure women in all positions equal total female employees.`,
+            'error'
+        );
+        navigateToSection(3);
+        return false;
+    }
+    
+    return true;
+}
+
+function navigateToSection(sectionNumber) {
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    state.currentSection = sectionNumber;
+    document.querySelector(`.form-section[data-section="${sectionNumber}"]`).classList.add('active');
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateSubmitButton() {
+    const submitBtn = document.getElementById('submitBtn');
+    const finalizeBtn = document.getElementById('finalizeBtn');
+    
+    if (state.formStatus === 'finalized') {
+        submitBtn.disabled = false;
+        finalizeBtn.disabled = true;
+        finalizeBtn.textContent = '✓ FINALIZED';
+    } else {
+        submitBtn.disabled = true;
+        finalizeBtn.disabled = false;
+        finalizeBtn.textContent = '✓ FINALIZE';
+    }
+}
+
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (state.formStatus !== 'finalized') {
+        showNotification('Please finalize the form before submitting', 'warning');
+        return;
+    }
+
+    const formData = new FormData(e.target);
+    
+    const data = {
+        timestamp: new Date().toISOString(),
+        submittedBy: 'surveyor',
+        form_status: 'submitted'
+    };
+    
+    for (const [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    
+    // Handle checkbox groups
+    const checkboxGroups = {};
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        if (checkbox.checked) {
+            if (!checkboxGroups[checkbox.name]) {
+                checkboxGroups[checkbox.name] = [];
+            }
+            checkboxGroups[checkbox.name].push(checkbox.value);
+        }
+    });
+    
+    for (const [key, values] of Object.entries(checkboxGroups)) {
+        data[key] = values.join(', ');
+    }
+
+    if (state.isOnline) {
+        await submitToServer(data);
+    } else {
+        saveOffline(data);
+    }
+}
+
+async function submitToServer(data) {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'SUBMITTING...';
+
+    try {
+        const response = await fetch(CONFIG.SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+
+        // Remove from drafts if it was a draft
+        if (state.currentDraftId) {
+            state.drafts = state.drafts.filter(d => d.draftId !== state.currentDraftId);
+            localStorage.setItem('formDrafts', JSON.stringify(state.drafts));
+            updateDraftCount();
+        }
+
+        showNotification('Data submitted successfully!', 'success');
+        clearForm(true);
+        
+    } catch (error) {
+        console.error('Submit error:', error);
+        showNotification('Failed to submit - Saved offline', 'error');
+        saveOffline(data);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '📤 SUBMIT';
+    }
+}
+
+function saveOffline(data) {
+    state.pendingSubmissions.push(data);
+    localStorage.setItem('pendingSubmissions', JSON.stringify(state.pendingSubmissions));
+    
+    // Remove from drafts
+    if (state.currentDraftId) {
+        state.drafts = state.drafts.filter(d => d.draftId !== state.currentDraftId);
+        localStorage.setItem('formDrafts', JSON.stringify(state.drafts));
+        updateDraftCount();
+    }
+    
+    updatePendingCount();
+    showNotification('Data saved offline - Will sync when online', 'info');
+    clearForm(true);
+}
+
+async function syncPendingSubmissions() {
+    if (state.pendingSubmissions.length === 0) return;
+
+    showNotification('Syncing pending submissions...', 'info');
+    const successfulSyncs = [];
+    
+    for (let i = 0; i < state.pendingSubmissions.length; i++) {
+        try {
+            await fetch(CONFIG.SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(state.pendingSubmissions[i])
+            });
+            successfulSyncs.push(i);
+        } catch (error) {
+            console.error('Sync error:', error);
+        }
+    }
+
+    if (successfulSyncs.length > 0) {
+        state.pendingSubmissions = state.pendingSubmissions.filter((_, index) => 
+            !successfulSyncs.includes(index)
+        );
+        localStorage.setItem('pendingSubmissions', JSON.stringify(state.pendingSubmissions));
+        updatePendingCount();
+        showNotification(`Successfully synced ${successfulSyncs.length} submission(s)`, 'success');
+    }
+}
+
+function clearForm(resetStatus = true) {
+    document.getElementById('dataForm').reset();
+    
+    // Clear signature pads
+    Object.keys(state.signaturePads).forEach(fieldName => {
+        clearSignature(fieldName);
+    });
+    
+    // Clear checkboxes
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // Reset cascading dropdowns
+    const districtSelect = document.getElementById('district');
+    if (districtSelect) {
+        districtSelect.innerHTML = '<option value="">Select...</option>';
+        districtSelect.disabled = true;
+    }
+    
+    // Clear GPS data
+    state.gpsLocation = null;
+    state.gpsAttempted = false;
+    const gpsIcon = document.getElementById('gps_icon');
+    const gpsStatus = document.getElementById('gps_status');
+    const gpsCoords = document.getElementById('gps_coords');
+    
+    if (gpsIcon) gpsIcon.className = 'gps-icon';
+    if (gpsStatus) gpsStatus.textContent = 'Automatically capturing GPS location...';
+    if (gpsCoords) gpsCoords.textContent = '';
+    
+    // Clear GPS hidden inputs
+    const gpsLatInput = document.getElementById('gps_latitude');
+    const gpsLonInput = document.getElementById('gps_longitude');
+    const gpsAccInput = document.getElementById('gps_accuracy');
+    const gpsTimeInput = document.getElementById('gps_timestamp');
+    
+    if (gpsLatInput) gpsLatInput.value = '';
+    if (gpsLonInput) gpsLonInput.value = '';
+    if (gpsAccInput) gpsAccInput.value = '';
+    if (gpsTimeInput) gpsTimeInput.value = '';
+    
+    // Reset form status
+    if (resetStatus) {
+        state.formStatus = 'draft';
+        state.currentDraftId = null;
+        state.currentDraftName = null;
+        document.getElementById('form_status').value = 'draft';
+        document.getElementById('draft_id').value = '';
+    }
+    
+    // Reset to section 1
+    state.currentSection = 1;
+    document.querySelectorAll('.form-section').forEach(section => section.classList.remove('active'));
+    const section1 = document.querySelector('.form-section[data-section="1"]');
+    if (section1) {
+        section1.classList.add('active');
+    }
+    
+    updateProgress();
+    updateSubmitButton();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Re-initialize features
+    setTimeout(() => {
+        initializeSignaturePads();
+        captureGPSAutomatically();
+    }, 100);
+}
+
+function showNotification(message, type) {
+    const notification = document.getElementById('notification');
+    const text = document.getElementById('notificationText');
+    
+    notification.className = `notification ${type} show`;
+    text.textContent = message;
+
+    // Longer timeout for error messages with more content
+    const timeout = type === 'error' && message.length > 100 ? 8000 : 4000;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, timeout);
+}
+
+// ============================================
+// SIGNATURE PAD FUNCTIONS
+// ============================================
+function initializeSignaturePads() {
+    const canvases = document.querySelectorAll('.signature-canvas');
+    
+    canvases.forEach(canvas => {
+        const fieldName = canvas.getAttribute('data-field');
+        
+        // Set canvas size
+        const container = canvas.parentElement;
+        canvas.width = container.offsetWidth - 20;
+        canvas.height = 150;
+        
+        // Initialize SignaturePad
+        const signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255, 255, 255)',
+            penColor: 'rgb(0, 0, 0)',
+            minWidth: 1,
+            maxWidth: 3
+        });
+        
+        // Store reference
+        state.signaturePads[fieldName] = signaturePad;
+        
+        // Update hidden input when signature changes
+        signaturePad.addEventListener('endStroke', () => {
+            const hiddenInput = document.getElementById(fieldName);
+            if (hiddenInput) {
+                hiddenInput.value = signaturePad.toDataURL();
+            }
+        });
+    });
+}
+
+function clearSignature(fieldName) {
+    const signaturePad = state.signaturePads[fieldName];
+    if (signaturePad) {
+        signaturePad.clear();
+        const hiddenInput = document.getElementById(fieldName);
+        if (hiddenInput) {
+            hiddenInput.value = '';
+        }
+    }
+}
+
+function resizeSignaturePads() {
+    Object.keys(state.signaturePads).forEach(fieldName => {
+        const canvas = document.getElementById(`${fieldName}_canvas`);
+        if (canvas && canvas.parentElement) {
+            const signaturePad = state.signaturePads[fieldName];
+            const data = signaturePad.toData();
+            
+            const container = canvas.parentElement;
+            canvas.width = container.offsetWidth - 20;
+            canvas.height = 150;
+            
+            signaturePad.fromData(data);
+        }
+    });
+}
+
+// Resize signature pads on window resize
+window.addEventListener('resize', resizeSignaturePads);
+
+// ============================================
+// ANALYSIS DASHBOARD FUNCTIONS
+// ============================================
+async function openAnalysisModal() {
+    // Check if logged in
+    if (!checkAdminLogin()) {
+        return;
+    }
+    
+    const modal = document.getElementById('analysisModal');
+    const body = document.getElementById('analysisBody');
+    
+    modal.classList.add('show');
+    body.innerHTML = '<div class="analysis-loading"><p>Loading analysis data...</p></div>';
+    
+    try {
+        // Fetch data from Google Apps Script
+        const response = await fetch(CONFIG.SCRIPT_URL + '?action=getAnalysis', {
+            method: 'GET'
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            renderAnalysisDashboard(data.data);
+        } else {
+            throw new Error(data.message || 'Failed to load data');
+        }
+    } catch (error) {
+        console.error('Analysis error:', error);
+        body.innerHTML = `
+            <div class="analysis-error">
+                <p>⚠️ Unable to load analysis data</p>
+                <p style="font-size: 12px; margin-top: 10px;">${error.message}</p>
+                <p style="font-size: 12px; margin-top: 10px;">Please ensure the Google Apps Script is properly deployed and the data sheet contains survey responses.</p>
+            </div>
+        `;
+    }
+}
+
+function closeAnalysisModal() {
+    document.getElementById('analysisModal').classList.remove('show');
+}
+
+function renderAnalysisDashboard(data) {
+    const body = document.getElementById('analysisBody');
+    
+    // Create dashboard HTML (implementation similar to original)
+    let html = `
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-label">TOTAL SUBMISSIONS</div>
+                <div class="stat-value">${data.totalSubmissions}</div>
+                <div class="stat-sublabel">Media institutions surveyed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">TOTAL EMPLOYEES</div>
+                <div class="stat-value">${data.totalEmployees.toLocaleString()}</div>
+                <div class="stat-sublabel">Across all media houses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">FEMALE EMPLOYEES</div>
+                <div class="stat-value">${data.femalePercentage}%</div>
+                <div class="stat-sublabel">${data.totalFemale.toLocaleString()} out of ${data.totalEmployees.toLocaleString()}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">WOMEN IN LEADERSHIP</div>
+                <div class="stat-value">${data.leadershipFemalePercentage}%</div>
+                <div class="stat-sublabel">${data.leadershipFemale} out of ${data.totalLeadership} positions</div>
+            </div>
+        </div>
+    `;
+    
+    body.innerHTML = html;
+}
+
+// Close modals when clicking outside
+document.getElementById('draftsModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDraftsModal();
+    }
+});
+
+document.getElementById('draftNameModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        cancelDraftName();
+    }
+});
+
+document.getElementById('analysisModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeAnalysisModal();
+    }
+});
+
+// Initialize on load
+init();
