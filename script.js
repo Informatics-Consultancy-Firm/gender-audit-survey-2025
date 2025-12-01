@@ -1,4 +1,4 @@
-// ============================================   
+// ============================================
 // CONFIGURATION
 // ============================================
 const CONFIG = {
@@ -1757,7 +1757,7 @@ function closeAnalysisModal() {
 function renderAnalysisDashboard(data) {
     const body = document.getElementById('analysisBody');
     
-    // Create dashboard HTML
+    // Create comprehensive dashboard HTML
     let html = `
         <!-- KEY STATISTICS -->
         <div class="dashboard-grid">
@@ -1785,56 +1785,122 @@ function renderAnalysisDashboard(data) {
 
         <!-- MEDIA TYPE DISTRIBUTION -->
         <div class="chart-container">
-            <div class="chart-title">MEDIA TYPE DISTRIBUTION</div>
+            <div class="chart-title">📊 MEDIA TYPE DISTRIBUTION</div>
             <canvas id="mediaTypeChart" class="chart-canvas"></canvas>
         </div>
 
         <!-- REGIONAL DISTRIBUTION -->
         <div class="chart-container">
-            <div class="chart-title">REGIONAL DISTRIBUTION</div>
+            <div class="chart-title">🗺️ REGIONAL DISTRIBUTION</div>
             <canvas id="regionalChart" class="chart-canvas"></canvas>
         </div>
 
         <!-- DISTRICT DISTRIBUTION -->
         <div class="chart-container">
-            <div class="chart-title">DISTRICT DISTRIBUTION</div>
+            <div class="chart-title">📍 DISTRICT DISTRIBUTION</div>
             <canvas id="districtChart" class="chart-canvas"></canvas>
         </div>
 
         <!-- WORKFORCE GENDER COMPOSITION -->
         <div class="chart-container">
-            <div class="chart-title">WORKFORCE GENDER COMPOSITION</div>
+            <div class="chart-title">👥 WORKFORCE GENDER COMPOSITION</div>
             <canvas id="genderChart" class="chart-canvas"></canvas>
         </div>
 
         <!-- LEADERSHIP REPRESENTATION -->
         <div class="chart-container">
-            <div class="chart-title">LEADERSHIP REPRESENTATION BY GENDER</div>
+            <div class="chart-title">👔 LEADERSHIP REPRESENTATION BY GENDER</div>
             <canvas id="leadershipChart" class="chart-canvas"></canvas>
         </div>
 
         <!-- DEPARTMENTAL DISTRIBUTION -->
         <div class="chart-container">
-            <div class="chart-title">GENDER DISTRIBUTION BY DEPARTMENT</div>
+            <div class="chart-title">🏢 GENDER DISTRIBUTION BY DEPARTMENT</div>
             <canvas id="departmentChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- OWNER GENDER DISTRIBUTION -->
+        <div class="chart-container">
+            <div class="chart-title">👤 MEDIA HOUSE OWNERSHIP BY GENDER</div>
+            <canvas id="ownerGenderChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- RECRUITMENT TRENDS -->
+        <div class="chart-container">
+            <div class="chart-title">📈 WOMEN RECRUITED IN LAST 12 MONTHS</div>
+            <canvas id="recruitmentChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- RETENTION ANALYSIS -->
+        <div class="chart-container">
+            <div class="chart-title">⏱️ WOMEN RETAINED FOR MORE THAN 3 YEARS</div>
+            <canvas id="retentionChart" class="chart-canvas"></canvas>
         </div>
 
         <!-- BARRIERS TO ENTRY -->
         <div class="chart-container">
-            <div class="chart-title">BARRIERS WOMEN FACE AT ENTRY LEVEL</div>
+            <div class="chart-title">🚧 BARRIERS WOMEN FACE AT ENTRY LEVEL</div>
             <canvas id="barriersChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- EQUAL RETENTION PERCEPTION -->
+        <div class="chart-container">
+            <div class="chart-title">⚖️ PERCEPTION: EQUAL RETENTION CHANCES FOR WOMEN</div>
+            <canvas id="equalRetentionChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- ATTRITION NUMBERS -->
+        <div class="chart-container">
+            <div class="chart-title">📉 WOMEN WHO LEFT IN LAST 12 MONTHS</div>
+            <canvas id="attritionNumbersChart" class="chart-canvas"></canvas>
         </div>
 
         <!-- ATTRITION REASONS -->
         <div class="chart-container">
-            <div class="chart-title">REASONS FOR WOMEN LEAVING</div>
+            <div class="chart-title">❌ REASONS FOR WOMEN LEAVING</div>
             <canvas id="attritionChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- CAREER STAGE DEPARTURE -->
+        <div class="chart-container">
+            <div class="chart-title">🎯 CAREER STAGE AT DEPARTURE</div>
+            <canvas id="careerStageChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- AVERAGE STAY DURATION -->
+        <div class="chart-container">
+            <div class="chart-title">⌛ AVERAGE STAY DURATION OF WOMEN</div>
+            <canvas id="stayDurationChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- HIGHER ATTRITION RATE -->
+        <div class="chart-container">
+            <div class="chart-title">📊 PERCEPTION: WOMEN LEAVE AT HIGHER RATE THAN MEN</div>
+            <canvas id="higherAttritionChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- ATTRITION IMPACT -->
+        <div class="chart-container">
+            <div class="chart-title">💼 IMPACT OF WOMEN'S ATTRITION ON ORGANIZATION</div>
+            <canvas id="attritionImpactChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- FIRST FEMALE HIRE -->
+        <div class="chart-container">
+            <div class="chart-title">🕐 WHEN ORGANIZATION FIRST HIRED FEMALE STAFF</div>
+            <canvas id="firstFemaleHireChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- GENDER REPRESENTATION OVERVIEW -->
+        <div class="chart-container">
+            <div class="chart-title">📊 COMPREHENSIVE GENDER REPRESENTATION OVERVIEW</div>
+            <canvas id="comprehensiveGenderChart" class="chart-canvas"></canvas>
         </div>
     `;
     
     body.innerHTML = html;
     
-    // Render charts
+    // Render all charts
     setTimeout(() => {
         renderMediaTypeChart(data.mediaTypes);
         renderRegionalChart(data.regions);
@@ -1842,8 +1908,19 @@ function renderAnalysisDashboard(data) {
         renderGenderChart(data);
         renderLeadershipChart(data);
         renderDepartmentChart(data);
+        renderOwnerGenderChart(data.ownerGender);
+        renderRecruitmentChart(data.womenRecruited);
+        renderRetentionChart(data.womenRetained);
         renderBarriersChart(data.barriers);
+        renderEqualRetentionChart(data.equalRetention);
+        renderAttritionNumbersChart(data.womenLeft);
         renderAttritionChart(data.attritionReasons);
+        renderCareerStageChart(data.careerStageDeparture);
+        renderStayDurationChart(data.stayDuration);
+        renderHigherAttritionChart(data.higherAttrition);
+        renderAttritionImpactChart(data.attritionImpact);
+        renderFirstFemaleHireChart(data.firstFemaleHire);
+        renderComprehensiveGenderChart(data);
     }, 100);
 }
 
@@ -2127,6 +2204,394 @@ function renderAttritionChart(reasons) {
                     ticks: {
                         stepSize: 1
                     }
+                }
+            }
+        }
+    });
+}
+
+function renderOwnerGenderChart(ownerGender) {
+    const ctx = document.getElementById('ownerGenderChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(ownerGender),
+            datasets: [{
+                data: Object.values(ownerGender),
+                backgroundColor: ['#004080', '#dc3545', '#6c757d'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function renderRecruitmentChart(womenRecruited) {
+    const ctx = document.getElementById('recruitmentChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(womenRecruited),
+            datasets: [{
+                label: 'Number of Organizations',
+                data: Object.values(womenRecruited),
+                backgroundColor: '#28a745',
+                borderColor: '#28a745',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderRetentionChart(womenRetained) {
+    const ctx = document.getElementById('retentionChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(womenRetained),
+            datasets: [{
+                label: 'Number of Organizations',
+                data: Object.values(womenRetained),
+                backgroundColor: '#17a2b8',
+                borderColor: '#17a2b8',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderEqualRetentionChart(equalRetention) {
+    const ctx = document.getElementById('equalRetentionChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'polarArea',
+        data: {
+            labels: Object.keys(equalRetention),
+            datasets: [{
+                data: Object.values(equalRetention),
+                backgroundColor: [
+                    '#28a745',
+                    '#5cb85c',
+                    '#ffc107',
+                    '#fd7e14',
+                    '#dc3545'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+}
+
+function renderAttritionNumbersChart(womenLeft) {
+    const ctx = document.getElementById('attritionNumbersChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(womenLeft),
+            datasets: [{
+                label: 'Number of Organizations',
+                data: Object.values(womenLeft),
+                backgroundColor: '#dc3545',
+                borderColor: '#dc3545',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderCareerStageChart(careerStage) {
+    const ctx = document.getElementById('careerStageChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(careerStage),
+            datasets: [{
+                data: Object.values(careerStage),
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function renderStayDurationChart(stayDuration) {
+    const ctx = document.getElementById('stayDurationChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(stayDuration),
+            datasets: [{
+                label: 'Number of Organizations',
+                data: Object.values(stayDuration),
+                backgroundColor: '#17a2b8',
+                borderColor: '#17a2b8',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderHigherAttritionChart(higherAttrition) {
+    const ctx = document.getElementById('higherAttritionChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'polarArea',
+        data: {
+            labels: Object.keys(higherAttrition),
+            datasets: [{
+                data: Object.values(higherAttrition),
+                backgroundColor: [
+                    '#dc3545',
+                    '#fd7e14',
+                    '#ffc107',
+                    '#5cb85c',
+                    '#28a745'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+}
+
+function renderAttritionImpactChart(attritionImpact) {
+    const ctx = document.getElementById('attritionImpactChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(attritionImpact),
+            datasets: [{
+                label: 'Number of Organizations',
+                data: Object.values(attritionImpact),
+                backgroundColor: '#6f42c1',
+                borderColor: '#6f42c1',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderFirstFemaleHireChart(firstFemaleHire) {
+    const ctx = document.getElementById('firstFemaleHireChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(firstFemaleHire),
+            datasets: [{
+                label: 'Number of Organizations',
+                data: Object.values(firstFemaleHire),
+                backgroundColor: '#20c997',
+                borderColor: '#20c997',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderComprehensiveGenderChart(data) {
+    const ctx = document.getElementById('comprehensiveGenderChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Total Workforce', 'Leadership', 'Non-Leadership', 'Technical', 'Operations', 'Newsroom'],
+            datasets: [{
+                label: 'Women',
+                data: [
+                    data.totalFemale,
+                    data.leadershipFemale,
+                    data.nonLeadershipFemale,
+                    data.technicalFemale,
+                    data.operationsFemale,
+                    data.newsroomFemale
+                ],
+                backgroundColor: '#dc3545',
+                borderWidth: 1
+            }, {
+                label: 'Men',
+                data: [
+                    data.totalMale,
+                    data.leadershipMale,
+                    data.nonLeadershipMale,
+                    data.technicalMale,
+                    data.operationsMale,
+                    data.newsroomMale
+                ],
+                backgroundColor: '#004080',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
         }
