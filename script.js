@@ -1,4 +1,4 @@
-// ============================================                  
+// ============================================            
 // CONFIGURATION
 // ============================================
 const CONFIG = {
@@ -289,13 +289,13 @@ function generateFormSections() {
         const section = FORM_SECTIONS[sectionTitle];
         const isLastSection = index === sectionKeys.length - 1;
         
-        html += \`
-            <div class="form-section \${sectionNum === 1 ? 'active' : ''}" data-section="\${sectionNum}">
+        html += `
+            <div class="form-section ${sectionNum === 1 ? 'active' : ''}" data-section="${sectionNum}">
                 <div class="section-header">
-                    <h2 class="section-title">\${sectionTitle.toUpperCase()}</h2>
-                    <p class="section-description">\${section.description}</p>
+                    <h2 class="section-title">${sectionTitle.toUpperCase()}</h2>
+                    <p class="section-description">${section.description}</p>
                 </div>
-        \`;
+        `;
         
         // Generate fields
         const fields = Object.entries(section.fields);
@@ -310,25 +310,25 @@ function generateFormSections() {
             
             // Add conditional styling if field is conditional
             const conditionalClass = conditional ? 'conditional-field' : '';
-            const conditionalData = conditional ? \`data-conditional="\${conditional}" data-conditional-value="\${conditionalValue}" data-conditional-inverse="\${conditionalInverse}"\` : '';
+            const conditionalData = conditional ? `data-conditional="${conditional}" data-conditional-value="${conditionalValue}" data-conditional-inverse="${conditionalInverse}"` : '';
             
-            html += \`<div class="form-group \${conditionalClass}" \${conditionalData} id="group_\${fieldName}">\`;
-            html += \`<label class="form-label">\${label.toUpperCase()} \${required ? '<span class="required">*</span>' : ''}</label>\`;
+            html += `<div class="form-group ${conditionalClass}" ${conditionalData} id="group_${fieldName}">`;
+            html += `<label class="form-label">${label.toUpperCase()} ${required ? '<span class="required">*</span>' : ''}</label>`;
             
             if (type === 'signature') {
                 // Signature pad
-                html += \`
+                html += `
                     <div class="signature-container">
-                        <canvas class="signature-canvas" id="\${fieldName}_canvas" data-field="\${fieldName}"></canvas>
+                        <canvas class="signature-canvas" id="${fieldName}_canvas" data-field="${fieldName}"></canvas>
                         <div class="signature-controls">
-                            <button type="button" class="signature-btn" onclick="clearSignature('\${fieldName}')">CLEAR</button>
+                            <button type="button" class="signature-btn" onclick="clearSignature('${fieldName}')">CLEAR</button>
                         </div>
                     </div>
-                    <input type="hidden" name="\${fieldName}" id="\${fieldName}" \${required ? 'required' : ''}>
-                \`;
+                    <input type="hidden" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''}>
+                `;
             } else if (type === 'gps') {
                 // GPS Location (auto-captured)
-                html += \`
+                html += `
                     <div class="gps-container">
                         <div class="gps-status">
                             <div class="gps-icon" id="gps_icon"></div>
@@ -342,59 +342,59 @@ function generateFormSections() {
                     <input type="hidden" name="gps_longitude" id="gps_longitude">
                     <input type="hidden" name="gps_accuracy" id="gps_accuracy">
                     <input type="hidden" name="gps_timestamp" id="gps_timestamp">
-                \`;
+                `;
             } else if (type === 'radio') {
                 html += '<div class="radio-group">';
                 fieldConfig.options.forEach((option, idx) => {
-                    html += \`
+                    html += `
                         <div class="radio-item">
-                            <input type="radio" name="\${fieldName}" id="\${fieldName}_\${idx}" value="\${option}" \${required ? 'required' : ''} data-field-name="\${fieldName}">
-                            <label for="\${fieldName}_\${idx}">\${option}</label>
+                            <input type="radio" name="${fieldName}" id="${fieldName}_${idx}" value="${option}" ${required ? 'required' : ''} data-field-name="${fieldName}">
+                            <label for="${fieldName}_${idx}">${option}</label>
                         </div>
-                    \`;
+                    `;
                 });
                 html += '</div>';
-                html += \`<div class="field-error" id="error_\${fieldName}">Please select an option</div>\`;
+                html += `<div class="field-error" id="error_${fieldName}">Please select an option</div>`;
             } else if (type === 'checkbox') {
                 html += '<div class="checkbox-group">';
                 fieldConfig.options.forEach((option, idx) => {
-                    html += \`
+                    html += `
                         <div class="checkbox-item">
-                            <input type="checkbox" name="\${fieldName}" id="\${fieldName}_\${idx}" value="\${option}">
-                            <label for="\${fieldName}_\${idx}">\${option}</label>
+                            <input type="checkbox" name="${fieldName}" id="${fieldName}_${idx}" value="${option}">
+                            <label for="${fieldName}_${idx}">${option}</label>
                         </div>
-                    \`;
+                    `;
                 });
                 html += '</div>';
             } else if (type === 'select' && fieldConfig.options) {
                 const isDisabled = cascadeFrom ? 'disabled' : '';
-                html += \`<select class="form-select" name="\${fieldName}" id="\${fieldName}" \${required ? 'required' : ''} \${isDisabled} data-cascade-from="\${cascadeFrom || ''}" data-field-name="\${fieldName}">\`;
+                html += `<select class="form-select" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} ${isDisabled} data-cascade-from="${cascadeFrom || ''}" data-field-name="${fieldName}">`;
                 html += '<option value="">Select...</option>';
                 fieldConfig.options.forEach(option => {
-                    html += \`<option value="\${option}">\${option}</option>\`;
+                    html += `<option value="${option}">${option}</option>`;
                 });
                 html += '</select>';
-                html += \`<div class="field-error" id="error_\${fieldName}">Please select an option</div>\`;
+                html += `<div class="field-error" id="error_${fieldName}">Please select an option</div>`;
             } else if (type === 'date') {
-                html += \`<input type="date" class="form-input" name="\${fieldName}" id="\${fieldName}" \${required ? 'required' : ''} data-field-name="\${fieldName}">\`;
-                html += \`<div class="field-error" id="error_\${fieldName}">This field is required</div>\`;
+                html += `<input type="date" class="form-input" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
             } else if (type === 'number') {
-                const minAttr = fieldConfig.min !== undefined ? \`min="\${fieldConfig.min}"\` : 'min="0"';
-                const maxAttr = fieldConfig.max !== undefined ? \`max="\${fieldConfig.max}"\` : '';
-                html += \`<input type="number" class="form-input" name="\${fieldName}" id="\${fieldName}" \${minAttr} \${maxAttr} step="1" \${required ? 'required' : ''} data-field-name="\${fieldName}">\`;
-                html += \`<div class="field-error" id="error_\${fieldName}">This field is required</div>\`;
+                const minAttr = fieldConfig.min !== undefined ? `min="${fieldConfig.min}"` : 'min="0"';
+                const maxAttr = fieldConfig.max !== undefined ? `max="${fieldConfig.max}"` : '';
+                html += `<input type="number" class="form-input" name="${fieldName}" id="${fieldName}" ${minAttr} ${maxAttr} step="1" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
             } else if (type === 'textarea') {
-                html += \`<textarea class="form-textarea" name="\${fieldName}" id="\${fieldName}" rows="4" \${required ? 'required' : ''} data-field-name="\${fieldName}"></textarea>\`;
-                html += \`<div class="field-error" id="error_\${fieldName}">This field is required</div>\`;
+                html += `<textarea class="form-textarea" name="${fieldName}" id="${fieldName}" rows="4" ${required ? 'required' : ''} data-field-name="${fieldName}"></textarea>`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
             } else if (type === 'tel') {
-                html += \`<input type="tel" class="form-input" name="\${fieldName}" id="\${fieldName}" \${required ? 'required' : ''} data-field-name="\${fieldName}">\`;
-                html += \`<div class="field-error" id="error_\${fieldName}">This field is required</div>\`;
+                html += `<input type="tel" class="form-input" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
             } else if (type === 'email') {
-                html += \`<input type="email" class="form-input" name="\${fieldName}" id="\${fieldName}" \${required ? 'required' : ''} data-field-name="\${fieldName}">\`;
-                html += \`<div class="field-error" id="error_\${fieldName}">Please enter a valid email</div>\`;
+                html += `<input type="email" class="form-input" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">Please enter a valid email</div>`;
             } else {
-                html += \`<input type="text" class="form-input" name="\${fieldName}" id="\${fieldName}" \${required ? 'required' : ''} data-field-name="\${fieldName}">\`;
-                html += \`<div class="field-error" id="error_\${fieldName}">This field is required</div>\`;
+                html += `<input type="text" class="form-input" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
             }
             
             html += '</div>';
@@ -445,7 +445,7 @@ function setupConditionalFields() {
         const isInverse = field.getAttribute('data-conditional-inverse') === 'true';
         
         // Find parent radio buttons
-        const parentRadios = document.querySelectorAll(\`input[name="\${parentFieldName}"]\`);
+        const parentRadios = document.querySelectorAll(`input[name="${parentFieldName}"]`);
         
         parentRadios.forEach(radio => {
             radio.addEventListener('change', function() {
@@ -475,7 +475,7 @@ function setupConditionalFields() {
         });
         
         // Check initial state
-        const checkedRadio = document.querySelector(\`input[name="\${parentFieldName}"]:checked\`);
+        const checkedRadio = document.querySelector(`input[name="${parentFieldName}"]:checked`);
         if (checkedRadio) {
             let shouldShow = false;
             if (isInverse) {
@@ -567,7 +567,7 @@ function setupRealTimeValidation() {
 
 function validateField(field) {
     const fieldName = field.getAttribute('data-field-name') || field.id;
-    const errorDiv = document.getElementById(\`error_\${fieldName}\`);
+    const errorDiv = document.getElementById(`error_${fieldName}`);
     
     if (!field.value || field.value.trim() === '') {
         field.classList.add('error');
@@ -601,7 +601,7 @@ function setupEventListeners() {
 }
 
 function nextSection() {
-    const currentSectionEl = document.querySelector(\`.form-section[data-section="\${state.currentSection}"]\`);
+    const currentSectionEl = document.querySelector(`.form-section[data-section="${state.currentSection}"]`);
     let isValid = true;
     let firstInvalidField = null;
     
@@ -616,12 +616,12 @@ function nextSection() {
         }
         
         if (input.type === 'radio') {
-            const radioGroup = currentSectionEl.querySelectorAll(\`input[name="\${input.name}"]\`);
+            const radioGroup = currentSectionEl.querySelectorAll(`input[name="${input.name}"]`);
             const isChecked = Array.from(radioGroup).some(radio => radio.checked);
             if (!isChecked) {
                 isValid = false;
                 const fieldName = input.getAttribute('data-field-name') || input.name;
-                const errorDiv = document.getElementById(\`error_\${fieldName}\`);
+                const errorDiv = document.getElementById(`error_${fieldName}`);
                 if (errorDiv) {
                     errorDiv.classList.add('show');
                 }
@@ -640,7 +640,7 @@ function nextSection() {
             isValid = false;
             input.classList.add('error');
             const fieldName = input.getAttribute('data-field-name') || input.id;
-            const errorDiv = document.getElementById(\`error_\${fieldName}\`);
+            const errorDiv = document.getElementById(`error_${fieldName}`);
             if (errorDiv) {
                 errorDiv.classList.add('show');
             }
@@ -654,8 +654,6 @@ function nextSection() {
             }, 3000);
         }
     });
-    
-    // No additional validation for Section C - all fields are independent
     
     if (!isValid) {
         showNotification('Please fill in all required fields correctly', 'error');
@@ -673,7 +671,7 @@ function nextSection() {
     if (state.currentSection < state.totalSections) {
         currentSectionEl.classList.remove('active');
         state.currentSection++;
-        const nextSection = document.querySelector(\`.form-section[data-section="\${state.currentSection}"]\`);
+        const nextSection = document.querySelector(`.form-section[data-section="${state.currentSection}"]`);
         if (nextSection) {
             nextSection.classList.add('active');
             updateProgress();
@@ -684,9 +682,9 @@ function nextSection() {
 
 function previousSection() {
     if (state.currentSection > 1) {
-        document.querySelector(\`.form-section[data-section="\${state.currentSection}"]\`).classList.remove('active');
+        document.querySelector(`.form-section[data-section="${state.currentSection}"]`).classList.remove('active');
         state.currentSection--;
-        document.querySelector(\`.form-section[data-section="\${state.currentSection}"]\`).classList.add('active');
+        document.querySelector(`.form-section[data-section="${state.currentSection}"]`).classList.add('active');
         updateProgress();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -703,7 +701,7 @@ function updateProgress() {
         statusBadge = '<span class="form-status-badge finalized">FINALIZED</span>';
     }
     
-    document.getElementById('progressText').innerHTML = \`SECTION \${state.currentSection} OF \${state.totalSections} \${statusBadge}\`;
+    document.getElementById('progressText').innerHTML = `SECTION ${state.currentSection} OF ${state.totalSections} ${statusBadge}`;
 }
 
 function handleViewData() {
@@ -822,7 +820,7 @@ function captureGPSAutomatically() {
                 statusIcon.classList.add('success');
             }
             if (statusText) statusText.textContent = 'GPS location captured successfully!';
-            if (coordsText) coordsText.textContent = \`Lat: \${latitude.toFixed(6)}, Lon: \${longitude.toFixed(6)} (±\${Math.round(accuracy)}m)\`;
+            if (coordsText) coordsText.textContent = `Lat: ${latitude.toFixed(6)}, Lon: ${longitude.toFixed(6)} (±${Math.round(accuracy)}m)`;
             
             console.log('GPS captured:', state.gpsLocation);
         },
@@ -953,7 +951,7 @@ function saveAsDraft(draftName) {
     document.getElementById('draft_id').value = data.draftId;
     
     updateDraftCount();
-    showNotification(\`Draft "\${draftName}" saved successfully!\`, 'success');
+    showNotification(`Draft "${draftName}" saved successfully!`, 'success');
 }
 
 function generateDraftId() {
@@ -978,21 +976,21 @@ function openDraftsModal() {
             const draftName = draft.draftName || 'Unnamed Draft';
             const mediaHouse = draft.media_house_name || '';
             
-            html += \`
+            html += `
                 <div class="draft-item">
                     <div class="draft-item-header">
                         <div>
-                            <div class="draft-item-title">\${draftName}</div>
-                            \${mediaHouse ? \`<div class="draft-item-subtitle">Media House: \${mediaHouse}</div>\` : ''}
+                            <div class="draft-item-title">${draftName}</div>
+                            ${mediaHouse ? `<div class="draft-item-subtitle">Media House: ${mediaHouse}</div>` : ''}
                         </div>
-                        <div class="draft-item-date">Saved: \${savedDate}</div>
+                        <div class="draft-item-date">Saved: ${savedDate}</div>
                     </div>
                     <div class="draft-item-actions">
-                        <button class="draft-action-btn load" onclick="loadDraft('\${draft.draftId}')">📂 LOAD</button>
-                        <button class="draft-action-btn delete" onclick="deleteDraft('\${draft.draftId}')">🗑️ DELETE</button>
+                        <button class="draft-action-btn load" onclick="loadDraft('${draft.draftId}')">📂 LOAD</button>
+                        <button class="draft-action-btn delete" onclick="deleteDraft('${draft.draftId}')">🗑️ DELETE</button>
                     </div>
                 </div>
-            \`;
+            `;
         });
         modalBody.innerHTML = html;
     }
@@ -1025,11 +1023,11 @@ function loadDraft(draftId) {
     Object.keys(draft).forEach(key => {
         if (['draftId', 'draftName', 'savedAt', 'savedBy', 'formStatus', 'currentSection'].includes(key)) return;
         
-        const field = document.querySelector(\`[name="\${key}"]\`);
+        const field = document.querySelector(`[name="${key}"]`);
         if (field) {
             if (field.type === 'hidden' && key.includes('signature')) {
                 // Handle signature fields
-                const canvas = document.getElementById(\`\${key}_canvas\`);
+                const canvas = document.getElementById(`${key}_canvas`);
                 if (canvas && draft[key]) {
                     const pad = state.signaturePads[key];
                     if (pad) {
@@ -1043,7 +1041,7 @@ function loadDraft(draftId) {
                     }
                 }
             } else if (field.type === 'radio') {
-                const radio = document.querySelector(\`input[name="\${key}"][value="\${draft[key]}"]\`);
+                const radio = document.querySelector(`input[name="${key}"][value="${draft[key]}"]`);
                 if (radio) {
                     radio.checked = true;
                     // Trigger change event for conditional fields
@@ -1054,7 +1052,7 @@ function loadDraft(draftId) {
                 if (draft[key]) {
                     const values = draft[key].split(', ');
                     values.forEach(val => {
-                        const checkbox = document.querySelector(\`input[name="\${key}"][value="\${val}"]\`);
+                        const checkbox = document.querySelector(`input[name="${key}"][value="${val}"]`);
                         if (checkbox) checkbox.checked = true;
                     });
                 }
@@ -1073,7 +1071,7 @@ function loadDraft(draftId) {
     if (draft.currentSection) {
         document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
         state.currentSection = draft.currentSection;
-        const targetSection = document.querySelector(\`.form-section[data-section="\${draft.currentSection}"]\`);
+        const targetSection = document.querySelector(`.form-section[data-section="${draft.currentSection}"]`);
         if (targetSection) {
             targetSection.classList.add('active');
         }
@@ -1082,14 +1080,14 @@ function loadDraft(draftId) {
     updateProgress();
     updateSubmitButton();
     closeDraftsModal();
-    showNotification(\`Draft "\${draft.draftName}" loaded successfully!\`, 'success');
+    showNotification(`Draft "${draft.draftName}" loaded successfully!`, 'success');
 }
 
 function deleteDraft(draftId) {
     const draft = state.drafts.find(d => d.draftId === draftId);
     const draftName = draft ? draft.draftName : 'this draft';
     
-    if (!confirm(\`Are you sure you want to delete "\${draftName}"?\`)) return;
+    if (!confirm(`Are you sure you want to delete "${draftName}"?`)) return;
     
     state.drafts = state.drafts.filter(d => d.draftId !== draftId);
     localStorage.setItem('formDrafts', JSON.stringify(state.drafts));
@@ -1123,7 +1121,7 @@ function finalizeForm() {
             }
             
             if (input.type === 'radio') {
-                const radioGroup = section.querySelectorAll(\`input[name="\${input.name}"]\`);
+                const radioGroup = section.querySelectorAll(`input[name="${input.name}"]`);
                 const isChecked = Array.from(radioGroup).some(radio => radio.checked);
                 if (!isChecked && firstInvalidSection === null) {
                     isValid = false;
@@ -1140,18 +1138,13 @@ function finalizeForm() {
     });
     
     if (!isValid) {
-        showNotification(\`Please complete all required fields. Check Section \${firstInvalidSection}\`, 'error');
+        showNotification(`Please complete all required fields. Check Section ${firstInvalidSection}`, 'error');
         // Navigate to first invalid section
         document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
         state.currentSection = firstInvalidSection;
-        document.querySelector(\`.form-section[data-section="\${firstInvalidSection}"]\`).classList.add('active');
+        document.querySelector(`.form-section[data-section="${firstInvalidSection}"]`).classList.add('active');
         updateProgress();
         return;
-    }
-    
-    // Validate employee numbers
-    if (!validateEmployeeNumbers()) {
-        return; // Validation function shows its own notification
     }
     
     state.formStatus = 'finalized';
@@ -1169,15 +1162,10 @@ function finalizeForm() {
     showNotification('Form finalized! You can now submit.', 'success');
 }
 
-function validateEmployeeNumbers() {
-    // No validation required - all fields are independent
-    return true;
-}
-
 function navigateToSection(sectionNumber) {
     document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
     state.currentSection = sectionNumber;
-    document.querySelector(\`.form-section[data-section="\${sectionNumber}"]\`).classList.add('active');
+    document.querySelector(`.form-section[data-section="${sectionNumber}"]`).classList.add('active');
     updateProgress();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1319,7 +1307,7 @@ async function syncPendingSubmissions() {
         );
         localStorage.setItem('pendingSubmissions', JSON.stringify(state.pendingSubmissions));
         updatePendingCount();
-        showNotification(\`Successfully synced \${successfulSyncs.length} submission(s)\`, 'success');
+        showNotification(`Successfully synced ${successfulSyncs.length} submission(s)`, 'success');
     }
 }
 
@@ -1402,7 +1390,7 @@ function showNotification(message, type) {
     const notification = document.getElementById('notification');
     const text = document.getElementById('notificationText');
     
-    notification.className = \`notification \${type} show\`;
+    notification.className = `notification ${type} show`;
     text.textContent = message;
 
     // Longer timeout for error messages with more content
@@ -1461,7 +1449,7 @@ function clearSignature(fieldName) {
 
 function resizeSignaturePads() {
     Object.keys(state.signaturePads).forEach(fieldName => {
-        const canvas = document.getElementById(\`\${fieldName}_canvas\`);
+        const canvas = document.getElementById(`${fieldName}_canvas`);
         if (canvas && canvas.parentElement) {
             const signaturePad = state.signaturePads[fieldName];
             const data = signaturePad.toData();
@@ -1508,13 +1496,13 @@ async function openAnalysisModal() {
         }
     } catch (error) {
         console.error('Analysis error:', error);
-        body.innerHTML = \`
+        body.innerHTML = `
             <div class="analysis-error">
                 <p>⚠️ Unable to load analysis data</p>
-                <p style="font-size: 12px; margin-top: 10px;">\${error.message}</p>
+                <p style="font-size: 12px; margin-top: 10px;">${error.message}</p>
                 <p style="font-size: 12px; margin-top: 10px;">Please ensure the Google Apps Script is properly deployed and the data sheet contains survey responses.</p>
             </div>
-        \`;
+        `;
     }
 }
 
@@ -1526,28 +1514,28 @@ function renderAnalysisDashboard(data) {
     const body = document.getElementById('analysisBody');
     
     // Create comprehensive dashboard HTML
-    let html = \`
+    let html = `
         <!-- KEY STATISTICS -->
         <div class="dashboard-grid">
             <div class="stat-card">
                 <div class="stat-label">TOTAL SUBMISSIONS</div>
-                <div class="stat-value">\${data.totalSubmissions}</div>
+                <div class="stat-value">${data.totalSubmissions}</div>
                 <div class="stat-sublabel">Media institutions surveyed</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">TOTAL EMPLOYEES</div>
-                <div class="stat-value">\${data.totalEmployees.toLocaleString()}</div>
+                <div class="stat-value">${data.totalEmployees.toLocaleString()}</div>
                 <div class="stat-sublabel">Across all media houses</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">FEMALE EMPLOYEES</div>
-                <div class="stat-value">\${data.femalePercentage}%</div>
-                <div class="stat-sublabel">\${data.totalFemale.toLocaleString()} out of \${data.totalEmployees.toLocaleString()}</div>
+                <div class="stat-value">${data.femalePercentage}%</div>
+                <div class="stat-sublabel">${data.totalFemale.toLocaleString()} out of ${data.totalEmployees.toLocaleString()}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">WOMEN IN LEADERSHIP</div>
-                <div class="stat-value">\${data.leadershipFemalePercentage}%</div>
-                <div class="stat-sublabel">\${data.leadershipFemale} out of \${data.totalLeadership} positions</div>
+                <div class="stat-value">${data.leadershipFemalePercentage}%</div>
+                <div class="stat-sublabel">${data.leadershipFemale} out of ${data.totalLeadership} positions</div>
             </div>
         </div>
 
@@ -1676,7 +1664,7 @@ function renderAnalysisDashboard(data) {
             <div class="chart-title">📊 COMPREHENSIVE GENDER REPRESENTATION OVERVIEW</div>
             <canvas id="comprehensiveGenderChart" class="chart-canvas"></canvas>
         </div>
-    \`;
+    `;
     
     body.innerHTML = html;
     
