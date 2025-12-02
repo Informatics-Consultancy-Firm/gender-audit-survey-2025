@@ -94,9 +94,9 @@ const FORM_SECTIONS = {
             technical_women: { label: 'Q7. Total number of female in technical Unit (Camera, IT, Graphics, Designing and Layout)', type: 'number' },
             technical_men: { label: 'Q7.Total number of male in technical Unit (Camera, IT, Graphics, Designing and Layout) - ', type: 'number' },
             operations_women: { label: 'Q8. Total number of female in operations/Admin/HR/Finance Unit', type: 'number' },
-            operations_men: { label: 'Q8. Total number of male in operations/Admin/HR/Finance Unit', type: 'number' },
-            newsroom_women: { label: 'Q9. Total number of female in Newsroom/Field/Reporting Unit', type: 'number' },
-            newsroom_men: { label: 'Q9. Total number of male in Newsroom/Field/Reporting Unit', type: 'number' }
+            operations_men: { label: 'Q8. Total number of male staff in operations/Admin/HR/Finance Unit', type: 'number' },
+            newsroom_women: { label: 'Q9. Total number of female staff in Newsroom/Field/Reporting Unit', type: 'number' },
+            newsroom_men: { label: 'Q9. Total number of male staff in Newsroom/Field/Reporting Unit', type: 'number' }
         }
     },
     'Section D: Entry and Retention': {
