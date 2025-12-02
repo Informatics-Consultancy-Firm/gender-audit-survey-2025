@@ -1,6 +1,6 @@
 // ============================================            
 // CONFIGURATION
-// ============================================         
+// ============================================
 const CONFIG = {
     SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzs_hVlsEQAu_4qeOaZUTjS_cnH3NR22ecQ8QUu5Zw_z8WpOzjnoMLo8Tm-hgQnohQ_zw/exec',
     GOOGLE_SHEET_URL: 'https://docs.google.com/spreadsheets/d/1tumwvxOoToPYDPdpXLyGYaiT2kbfN6Vw_HBd-8t6IAA/edit?gid=353413478#gid=353413478',
@@ -529,18 +529,14 @@ function setupCascadingDropdowns() {
 }
 
 function setupRealTimeValidation() {
-    // Add blur validation for all required number inputs in Section B and C
+    // Add input listener for number inputs to clear errors when typing
     const numberInputs = document.querySelectorAll('input[type="number"][required]');
     
     numberInputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            validateEmployeeNumbersRealTime();
-        });
-        
         input.addEventListener('input', function() {
             // Clear error styling when user starts typing
             this.classList.remove('error');
-            const errorDiv = document.getElementById(\`error_\${this.id}\`);
+            const errorDiv = document.getElementById(`error_${this.id}`);
             if (errorDiv) {
                 errorDiv.classList.remove('show');
             }
@@ -560,7 +556,7 @@ function setupRealTimeValidation() {
             if (this.type !== 'radio') {
                 this.classList.remove('error');
                 const fieldName = this.getAttribute('data-field-name') || this.id;
-                const errorDiv = document.getElementById(\`error_\${fieldName}\`);
+                const errorDiv = document.getElementById(`error_${fieldName}`);
                 if (errorDiv) {
                     errorDiv.classList.remove('show');
                 }
@@ -586,10 +582,6 @@ function validateField(field) {
         }
         return true;
     }
-}
-
-function validateEmployeeNumbersRealTime() {
-    // No validation required - all fields are independent
 }
 
 function setupEventListeners() {
