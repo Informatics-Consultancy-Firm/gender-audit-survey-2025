@@ -83,14 +83,14 @@ const FORM_SECTIONS = {
         fields: {
             leadership_women: { label: 'Q5. Total number of female staff in Leadership/Managerial positions ', type: 'number' },
             leadership_men: { label: 'Q5. Total number of male staff in Leadership/Managerial positions', type: 'number' },
-            non_managerial_women: { label: 'Q6. Total number of female staff in non-leadership/non-managerial positions', type: 'number' },
-            non_managerial_men: { label: 'Q6. Total number of male in non-leadership/non-managerial positions', type: 'number' },
-            technical_women: { label: 'Q7. Total number of female in technical Unit (Camera, IT, Graphics, Designing and Layout)', type: 'number' },
-            technical_men: { label: 'Q7. Of the total number of staff in your media institution, how many are in the technical Unit (Camera, IT, Graphics, Designing and Layout) - ', type: 'number' },
-            operations_women: { label: 'Q8. How many female staff are in the operations/Admin/HR/Finance Unit', type: 'number' },
-            operations_men: { label: 'Q8. How many male staff are in the operations/Admin/HR/Finance Unit', type: 'number' },
-            newsroom_women: { label: 'Q9. How many female staff are in the Newsroom/Field/Reporting Unit', type: 'number' },
-            newsroom_men: { label: 'Q9. How many male staff are in the Newsroom/Field/Reporting Unit', type: 'number' }
+            non_managerial_women: { label: 'Q6a. Total number of female staff in non-leadership/non-managerial positions', type: 'number' },
+            non_managerial_men: { label: 'Q6b. Total number of male staff in non-leadership/non-managerial positions', type: 'number' },
+            technical_women: { label: 'Q7a. Of the total number of female staff in your media institution, how many are in the technical Unit (Camera, IT, Graphics, Designing and Layout)', type: 'number' },
+            technical_men: { label: 'Q7b. Of the total number of male staff in your media institution, how many are in the technical Unit (Camera, IT, Graphics, Designing and Layout) - ', type: 'number' },
+            operations_women: { label: 'Q8a. How many female staff are in the operations/Admin/HR/Finance Unit', type: 'number' },
+            operations_men: { label: 'Q8b. How many male staff are in the operations/Admin/HR/Finance Unit', type: 'number' },
+            newsroom_women: { label: 'Q9b. How many female staff are in the Newsroom/Field/Reporting Unit', type: 'number' },
+            newsroom_men: { label: 'Q9b. How many male staff are in the Newsroom/Field/Reporting Unit', type: 'number' }
         }
     },
     'Section D: Entry and Retention': {
