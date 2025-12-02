@@ -87,16 +87,16 @@ const FORM_SECTIONS = {
     'Section C: Representation Across Positions': {
         description: 'Staff distribution across different roles and departments',
         fields: {
-            leadership_women: { label: 'Q5. Staff in Leadership/Managerial positions - Total number of women', type: 'number' },
-            leadership_men: { label: 'Q5. Staff in Leadership/Managerial positions - Total number of men', type: 'number' },
-            non_managerial_women: { label: 'Q6. Staff in Non-Managerial positions - Total number of women', type: 'number' },
-            non_managerial_men: { label: 'Q6. Staff in Non-Managerial positions - Total number of men', type: 'number' },
-            technical_women: { label: 'Q7. Technical Unit (Camera, IT, Graphics, Designing and Layout) - Total number of women', type: 'number' },
-            technical_men: { label: 'Q7. Technical Unit (Camera, IT, Graphics, Designing and Layout) - Total number of men', type: 'number' },
-            operations_women: { label: 'Q8. Operations/Admin/HR/Finance Unit - Total number of women', type: 'number' },
-            operations_men: { label: 'Q8. Operations/Admin/HR/Finance Unit - Total number of men', type: 'number' },
-            newsroom_women: { label: 'Q9. Newsroom/Field/Reporting Unit - Total number of women', type: 'number' },
-            newsroom_men: { label: 'Q9. Newsroom/Field/Reporting Unit - Total number of men', type: 'number' }
+            leadership_women: { label: 'Q5. Total number of female staff in Leadership/Managerial positions ', type: 'number' },
+            leadership_men: { label: 'Q5. Total number of male staff in Leadership/Managerial positions', type: 'number' },
+            non_managerial_women: { label: 'Q6. Total number of female staff in Non-Managerial positions', type: 'number' },
+            non_managerial_men: { label: 'Q6. Total number of male in Non-Managerial positions', type: 'number' },
+            technical_women: { label: 'Q7. Total number of female in technical Unit (Camera, IT, Graphics, Designing and Layout)', type: 'number' },
+            technical_men: { label: 'Q7.Total number of male in technical Unit (Camera, IT, Graphics, Designing and Layout) - ', type: 'number' },
+            operations_women: { label: 'Q8. Total number of female in operations/Admin/HR/Finance Unit', type: 'number' },
+            operations_men: { label: 'Q8. Total number of male in operations/Admin/HR/Finance Unit', type: 'number' },
+            newsroom_women: { label: 'Q9. Total number of female in Newsroom/Field/Reporting Unit', type: 'number' },
+            newsroom_men: { label: 'Q9. Total number of male in Newsroom/Field/Reporting Unit', type: 'number' }
         }
     },
     'Section D: Entry and Retention': {
