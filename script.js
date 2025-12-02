@@ -36,7 +36,6 @@ const FORM_SECTIONS = {
                 type: 'radio',
                 options: ['Print', 'Radio', 'Television', 'Online/Digital']
             },
-            address: { label: 'Address', type: 'text' },
             region: { 
                 label: 'Region', 
                 type: 'select',
@@ -53,21 +52,16 @@ const FORM_SECTIONS = {
                 type: 'radio',
                 options: ['Male', 'Female', 'Prefer not to say', "Don't know"]
             },
-            ownership_entity: { 
-                label: 'Who owns this media Institution?', 
-                type: 'radio',
-                options: ['Company', 'Government', 'Organization']
-            },
             ownership_type: { 
                 label: 'Ownership Type of the media institution', 
                 type: 'radio',
                 options: ['State', 'Community', 'Private', 'Faith-based']
             },
             year_established: { 
-                label: 'Year of establishment', 
-                type: 'number',
-                min: 1900,
-                max: new Date().getFullYear()
+                label: 'How long has your media institution been in operation?', 
+                type: 'radio',
+                options: ['Less than 1 year', '1-2 years', '2-4 years', "4-6 years", "6-8 years", "8+ years", "I don't know"]
+               
             }
         }
     },
@@ -80,7 +74,7 @@ const FORM_SECTIONS = {
             last_female_hire: { 
                 label: 'Q4. When was the last time you hired a female staff member?', 
                 type: 'radio',
-                options: ['Within the last 6 months', '1 year ago', '2 years ago', '3 years ago', '4 years ago', '5+ years ago']
+                options: ['Less than 1 year', '1 year ago', '2 years ago', '3 years ago', '4 years ago', '5+ years ago', "I don't know"]
             }
         }
     },
@@ -89,14 +83,14 @@ const FORM_SECTIONS = {
         fields: {
             leadership_women: { label: 'Q5. Total number of female staff in Leadership/Managerial positions ', type: 'number' },
             leadership_men: { label: 'Q5. Total number of male staff in Leadership/Managerial positions', type: 'number' },
-            non_managerial_women: { label: 'Q6. Total number of female staff in Non-Managerial positions', type: 'number' },
-            non_managerial_men: { label: 'Q6. Total number of male in Non-Managerial positions', type: 'number' },
+            non_managerial_women: { label: 'Q6. Total number of female staff in non-leadership/non-managerial positions', type: 'number' },
+            non_managerial_men: { label: 'Q6. Total number of male in non-leadership/non-managerial positions', type: 'number' },
             technical_women: { label: 'Q7. Total number of female in technical Unit (Camera, IT, Graphics, Designing and Layout)', type: 'number' },
-            technical_men: { label: 'Q7.Total number of male in technical Unit (Camera, IT, Graphics, Designing and Layout) - ', type: 'number' },
-            operations_women: { label: 'Q8. Total number of female in operations/Admin/HR/Finance Unit', type: 'number' },
-            operations_men: { label: 'Q8. Total number of male staff in operations/Admin/HR/Finance Unit', type: 'number' },
-            newsroom_women: { label: 'Q9. Total number of female staff in Newsroom/Field/Reporting Unit', type: 'number' },
-            newsroom_men: { label: 'Q9. Total number of male staff in Newsroom/Field/Reporting Unit', type: 'number' }
+            technical_men: { label: 'Q7. Of the total number of staff in your media institution, how many are in the technical Unit (Camera, IT, Graphics, Designing and Layout) - ', type: 'number' },
+            operations_women: { label: 'Q8. How many female staff are in the operations/Admin/HR/Finance Unit', type: 'number' },
+            operations_men: { label: 'Q8. How many male staff are in the operations/Admin/HR/Finance Unit', type: 'number' },
+            newsroom_women: { label: 'Q9. How many female staff are in the Newsroom/Field/Reporting Unit', type: 'number' },
+            newsroom_men: { label: 'Q9. How many male staff are in the Newsroom/Field/Reporting Unit', type: 'number' }
         }
     },
     'Section D: Entry and Retention': {
@@ -170,7 +164,7 @@ const FORM_SECTIONS = {
             },
             departure_reasons_other: { label: 'If Other, Please Specify', type: 'text', required: false },
             career_stage_departure: { 
-                label: 'Q17. At what stage of their career did most women leave?', 
+                label: 'Q17. At what stage of their career did they leave?', 
                 type: 'radio',
                 options: ['Entry-level', 'Mid-level', 'Senior-level', "Don't know"],
                 required: false,
