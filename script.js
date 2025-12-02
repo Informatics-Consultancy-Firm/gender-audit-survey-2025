@@ -16,11 +16,11 @@ const CONFIG = {
 // REGION-DISTRICT MAPPING
 // ============================================
 const REGION_DISTRICT_MAP = {
-    'Eastern Region': ['Kailahun District', 'Kenema District', 'Kono District'],
+    'Western Area': ['Western Area Urban District', 'Western Area Rural District'],
     'Northern Region': ['Bombali District', 'Falaba District', 'Koinadugu District', 'Tonkolili District'],
-    'North West Region': ['Kambia District', 'Karene District', 'Port Loko District'],
     'Southern Region': ['Bo District', 'Bonthe District', 'Moyamba District', 'Pujehun District'],
-    'Western Area': ['Western Area Urban District', 'Western Area Rural District']
+    'Eastern Region': ['Kailahun District', 'Kenema District', 'Kono District'],
+    'North-Western Region': ['Kambia District', 'Karene District', 'Port Loko District']
 };
 
 // ============================================
@@ -32,10 +32,11 @@ const FORM_SECTIONS = {
         fields: {
             media_house_name: { label: 'Name of Media House', type: 'text' },
             media_type: { 
-                label: 'Type of Media', 
-                type: 'checkbox',
+                label: 'Type of Media (select one)', 
+                type: 'radio',
                 options: ['Print', 'Radio', 'Television', 'Online/Digital']
             },
+            address: { label: 'Address', type: 'text' },
             region: { 
                 label: 'Region', 
                 type: 'select',
@@ -48,14 +49,25 @@ const FORM_SECTIONS = {
                 cascadeFrom: 'region'
             },
             owner_gender: { 
-                label: 'Gender identity of the owner of the media institution', 
+                label: 'Gender identity of the owner', 
                 type: 'radio',
-                options: ['Male', 'Female', "Don't know"]
+                options: ['Male', 'Female', 'Prefer not to say', "Don't know"]
+            },
+            ownership_entity: { 
+                label: 'Who owns this media Institution?', 
+                type: 'radio',
+                options: ['Company', 'Government', 'Organization']
+            },
+            ownership_type: { 
+                label: 'Ownership Type of the media institution', 
+                type: 'radio',
+                options: ['State', 'Community', 'Private', 'Faith-based']
             },
             year_established: { 
-                label: 'When was the media institution established?', 
-                type: 'radio',
-                options: ['6 months ago', '1-2 years ago', '3-4 years ago', '5-6 years ago', '7+ years']
+                label: 'Year of establishment', 
+                type: 'number',
+                min: 1900,
+                max: new Date().getFullYear()
             }
         }
     },
@@ -65,43 +77,43 @@ const FORM_SECTIONS = {
             total_employees: { label: 'Q1. Total number of employees', type: 'number' },
             total_female_employees: { label: 'Q2. Total number of female employees', type: 'number' },
             total_male_employees: { label: 'Q3. Total number of male employees', type: 'number' },
-            first_female_hire: { 
-                label: 'Q4. When did your organisation first hire a female staff?', 
+            last_female_hire: { 
+                label: 'Q4. When was the last time you hired a female staff member?', 
                 type: 'radio',
-                options: ['Six months ago', 'One year ago', 'Two years ago', 'Three years ago', 'Four years ago', 'Five years +']
+                options: ['Within the last 6 months', '1 year ago', '2 years ago', '3 years ago', '4 years ago', '5+ years ago']
             }
         }
     },
-    'Section E: Representation Across Different Positions': {
+    'Section C: Representation Across Positions': {
         description: 'Staff distribution across different roles and departments',
         fields: {
             leadership_women: { label: 'Q5. Staff in Leadership/Managerial positions - Total number of women', type: 'number' },
             leadership_men: { label: 'Q5. Staff in Leadership/Managerial positions - Total number of men', type: 'number' },
-            non_managerial_women: { label: 'Q6. Staff in Non-Managerial/Leadership positions - Total number of women', type: 'number' },
-            non_managerial_men: { label: 'Q6. Staff in Non-Managerial/Leadership positions - Total number of men', type: 'number' },
-            technical_women: { label: 'Q7. Technical Unit (Camera team, IT, Graphics, etc.) - Total number of women', type: 'number' },
-            technical_men: { label: 'Q7. Technical Unit (Camera team, IT, Graphics, etc.) - Total number of men', type: 'number' },
-            operations_women: { label: 'Q8. Operations/Administration/HR/Finance Unit - Total number of women', type: 'number' },
-            operations_men: { label: 'Q8. Operations/Administration/HR/Finance Unit - Total number of men', type: 'number' },
+            non_managerial_women: { label: 'Q6. Staff in Non-Managerial positions - Total number of women', type: 'number' },
+            non_managerial_men: { label: 'Q6. Staff in Non-Managerial positions - Total number of men', type: 'number' },
+            technical_women: { label: 'Q7. Technical Unit (Camera, IT, Graphics, Designing and Layout) - Total number of women', type: 'number' },
+            technical_men: { label: 'Q7. Technical Unit (Camera, IT, Graphics, Designing and Layout) - Total number of men', type: 'number' },
+            operations_women: { label: 'Q8. Operations/Admin/HR/Finance Unit - Total number of women', type: 'number' },
+            operations_men: { label: 'Q8. Operations/Admin/HR/Finance Unit - Total number of men', type: 'number' },
             newsroom_women: { label: 'Q9. Newsroom/Field/Reporting Unit - Total number of women', type: 'number' },
             newsroom_men: { label: 'Q9. Newsroom/Field/Reporting Unit - Total number of men', type: 'number' }
         }
     },
-    'Section C: Entry and Retention': {
+    'Section D: Entry and Retention': {
         description: 'Recruitment and retention of women employees',
         fields: {
             women_recruited_12months: { 
-                label: 'Q10. How many women were recruited into your organization in the last 12 months?', 
+                label: 'Q10. How many women were recruited in the last 12 months?', 
                 type: 'radio',
                 options: ['None', '1–2', '3–5', '6–10', 'More than 10', "Don't know"]
             },
             women_retained_3years: { 
-                label: 'Q11. How many women have remained in your organization for more than 3 years?', 
+                label: 'Q11. How many women have remained for more than 3 years?', 
                 type: 'radio',
                 options: ['None', '1–2', '3–5', '6–10', 'More than 10', "Don't know"]
             },
             women_face_barriers: { 
-                label: 'Q12. Do women face barriers to be recruited in your institution?', 
+                label: 'Q12. Do women face barriers to recruitment in your institution?', 
                 type: 'radio',
                 options: ['Yes', 'No']
             },
@@ -113,7 +125,7 @@ const FORM_SECTIONS = {
                     'Lack of mentorship/training opportunities',
                     'Limited job openings',
                     'Social expectations',
-                    'Family Pressure',
+                    'Family pressure',
                     'Lower starting pay compared to men',
                     'Other'
                 ],
@@ -123,57 +135,66 @@ const FORM_SECTIONS = {
             },
             entry_barriers_other: { label: 'If Other, Please Specify', type: 'text', required: false },
             equal_retention: { 
-                label: 'Q14. Do women journalists in your media institution have equal chances of being retained compared to men?', 
+                label: 'Q14. Women journalists in your institution have equal chances of retention compared to men', 
                 type: 'radio',
                 options: ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree']
             }
         }
     },
-    'Section D: Attrition of Women': {
+    'Section E: Attrition of Women': {
         description: 'Departure patterns and reasons for women leaving',
         fields: {
             women_left_12months: { 
-                label: 'Q15. In the last 12 months, how many women employees have left your institution?', 
+                label: 'Q15. In the last 12 months, how many women employees left your institution?', 
                 type: 'radio',
                 options: ['None', '1–2', '3–5', '6–10', 'More than 10', "Don't know"]
             },
             departure_reasons: { 
-                label: 'Q16. What were the main reasons for their departure? (Select all that apply)', 
+                label: 'Q16. What were the main reasons for departure? (Select all that apply)', 
                 type: 'checkbox',
                 options: [
                     'Harassment',
                     'Discrimination',
                     'Lack of career growth opportunities',
                     'Low pay or poor benefits',
-                    'Family responsibilities (e.g., childcare, household duties)',
-                    'Unsafe working conditions (e.g., field assignments, lack of social security - NASSIT, long working hours, lack of medical insurance)',
+                    'Family responsibilities (childcare, household duties)',
+                    'Unsafe working conditions (field assignments, long hours, lack of insurance/social security)',
                     'Better opportunities elsewhere',
-                    'Organizational restructuring or layoffs',
+                    'Organizational restructuring/layoffs',
                     'Other'
                 ],
-                required: false
+                required: false,
+                conditional: 'women_left_12months',
+                conditionalValue: 'None',
+                conditionalInverse: true
             },
             departure_reasons_other: { label: 'If Other, Please Specify', type: 'text', required: false },
             career_stage_departure: { 
-                label: 'Q17. At what stage of their career did most women leave your media institution?', 
+                label: 'Q17. At what stage of their career did most women leave?', 
                 type: 'radio',
                 options: ['Entry-level', 'Mid-level', 'Senior-level', "Don't know"],
-                required: false
+                required: false,
+                conditional: 'women_left_12months',
+                conditionalValue: 'None',
+                conditionalInverse: true
             },
             average_stay_duration: { 
-                label: 'Q18. How long, on average, do women stay before leaving your media institution?', 
+                label: 'Q18. Average length of stay before leaving', 
                 type: 'radio',
                 options: ['Less than 1 year', '1–2 years', '3–5 years', 'More than 5 years', "Don't know"],
-                required: false
+                required: false,
+                conditional: 'women_left_12months',
+                conditionalValue: 'None',
+                conditionalInverse: true
             },
             higher_attrition_rate: { 
-                label: 'Q19. Women leave at a higher rate than men in your media institution.', 
+                label: 'Q19. Women leave at a higher rate than men in your institution', 
                 type: 'radio',
                 options: ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree'],
                 required: false
             },
             attrition_impact: { 
-                label: 'Q20. What impact does attrition of women have on your media institution? (Select all that apply)', 
+                label: 'Q20. What impact does attrition of women have on your institution? (Select all that apply)', 
                 type: 'checkbox',
                 options: [
                     'Loss of skilled staff',
@@ -290,11 +311,12 @@ function generateFormSections() {
             const required = fieldConfig.required !== false;
             const conditional = fieldConfig.conditional;
             const conditionalValue = fieldConfig.conditionalValue;
+            const conditionalInverse = fieldConfig.conditionalInverse || false;
             const cascadeFrom = fieldConfig.cascadeFrom;
             
             // Add conditional styling if field is conditional
             const conditionalClass = conditional ? 'conditional-field' : '';
-            const conditionalData = conditional ? `data-conditional="${conditional}" data-conditional-value="${conditionalValue}"` : '';
+            const conditionalData = conditional ? `data-conditional="${conditional}" data-conditional-value="${conditionalValue}" data-conditional-inverse="${conditionalInverse}"` : '';
             
             html += `<div class="form-group ${conditionalClass}" ${conditionalData} id="group_${fieldName}">`;
             html += `<label class="form-label">${label.toUpperCase()} ${required ? '<span class="required">*</span>' : ''}</label>`;
@@ -363,7 +385,9 @@ function generateFormSections() {
                 html += `<input type="date" class="form-input" name="${fieldName}" id="${fieldName}" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
                 html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
             } else if (type === 'number') {
-                html += `<input type="number" class="form-input" name="${fieldName}" id="${fieldName}" min="0" step="1" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
+                const minAttr = fieldConfig.min !== undefined ? `min="${fieldConfig.min}"` : 'min="0"';
+                const maxAttr = fieldConfig.max !== undefined ? `max="${fieldConfig.max}"` : '';
+                html += `<input type="number" class="form-input" name="${fieldName}" id="${fieldName}" ${minAttr} ${maxAttr} step="1" ${required ? 'required' : ''} data-field-name="${fieldName}">`;
                 html += `<div class="field-error" id="error_${fieldName}">This field is required</div>`;
             } else if (type === 'textarea') {
                 html += `<textarea class="form-textarea" name="${fieldName}" id="${fieldName}" rows="4" ${required ? 'required' : ''} data-field-name="${fieldName}"></textarea>`;
@@ -424,19 +448,32 @@ function setupConditionalFields() {
     conditionalFields.forEach(field => {
         const parentFieldName = field.getAttribute('data-conditional');
         const expectedValue = field.getAttribute('data-conditional-value');
+        const isInverse = field.getAttribute('data-conditional-inverse') === 'true';
         
         // Find parent radio buttons
         const parentRadios = document.querySelectorAll(`input[name="${parentFieldName}"]`);
         
         parentRadios.forEach(radio => {
             radio.addEventListener('change', function() {
-                if (this.value === expectedValue) {
+                let shouldShow = false;
+                
+                if (isInverse) {
+                    // Show when value is NOT the expected value (skip logic for "None")
+                    shouldShow = this.value !== expectedValue;
+                } else {
+                    // Show when value matches expected value
+                    shouldShow = this.value === expectedValue;
+                }
+                
+                if (shouldShow) {
                     field.classList.add('show');
                 } else {
                     field.classList.remove('show');
                     // Clear any selections in the conditional field
                     const checkboxes = field.querySelectorAll('input[type="checkbox"]');
                     checkboxes.forEach(cb => cb.checked = false);
+                    const radios = field.querySelectorAll('input[type="radio"]');
+                    radios.forEach(r => r.checked = false);
                     const textInputs = field.querySelectorAll('input[type="text"], textarea');
                     textInputs.forEach(input => input.value = '');
                 }
@@ -445,8 +482,16 @@ function setupConditionalFields() {
         
         // Check initial state
         const checkedRadio = document.querySelector(`input[name="${parentFieldName}"]:checked`);
-        if (checkedRadio && checkedRadio.value === expectedValue) {
-            field.classList.add('show');
+        if (checkedRadio) {
+            let shouldShow = false;
+            if (isInverse) {
+                shouldShow = checkedRadio.value !== expectedValue;
+            } else {
+                shouldShow = checkedRadio.value === expectedValue;
+            }
+            if (shouldShow) {
+                field.classList.add('show');
+            }
         }
     });
 }
@@ -490,7 +535,7 @@ function setupCascadingDropdowns() {
 }
 
 function setupRealTimeValidation() {
-    // Add blur validation for all required number inputs in Section B and E
+    // Add blur validation for all required number inputs in Section B and C
     const numberInputs = document.querySelectorAll('input[type="number"][required]');
     
     numberInputs.forEach(input => {
@@ -550,7 +595,7 @@ function validateField(field) {
 }
 
 function validateEmployeeNumbersRealTime() {
-    // Only validate if we're in Section B or E
+    // Only validate if we're in Section B or C
     const currentSectionEl = document.querySelector(`.form-section[data-section="${state.currentSection}"]`);
     if (!currentSectionEl) return;
     
@@ -609,7 +654,7 @@ function validateEmployeeNumbersRealTime() {
         }
     }
     
-    // Validate Section E (positions) if we're in that section
+    // Validate Section C (positions) if we're in that section
     if (state.currentSection === 3 && totalEmployees > 0) {
         const leadershipWomen = parseInt(document.getElementById('leadership_women')?.value) || 0;
         const leadershipMen = parseInt(document.getElementById('leadership_men')?.value) || 0;
@@ -741,6 +786,12 @@ function nextSection() {
     const inputs = currentSectionEl.querySelectorAll('input[required], select[required], textarea[required]');
     
     inputs.forEach(input => {
+        // Skip validation for conditional fields that are hidden
+        const parentGroup = input.closest('.conditional-field');
+        if (parentGroup && !parentGroup.classList.contains('show')) {
+            return; // Skip hidden conditional fields
+        }
+        
         if (input.type === 'radio') {
             const radioGroup = currentSectionEl.querySelectorAll(`input[name="${input.name}"]`);
             const isChecked = Array.from(radioGroup).some(radio => radio.checked);
@@ -811,7 +862,7 @@ function nextSection() {
         }
     }
     
-    // Additional validation for Section E (positions)
+    // Additional validation for Section C (positions)
     if (state.currentSection === 3) {
         const totalEmployees = parseInt(document.getElementById('total_employees')?.value) || 0;
         const leadershipWomen = parseInt(document.getElementById('leadership_women')?.value) || 0;
@@ -1236,7 +1287,11 @@ function loadDraft(draftId) {
                 }
             } else if (field.type === 'radio') {
                 const radio = document.querySelector(`input[name="${key}"][value="${draft[key]}"]`);
-                if (radio) radio.checked = true;
+                if (radio) {
+                    radio.checked = true;
+                    // Trigger change event for conditional fields
+                    radio.dispatchEvent(new Event('change'));
+                }
             } else if (field.type === 'checkbox') {
                 // Handle checkbox groups
                 if (draft[key]) {
@@ -1304,6 +1359,12 @@ function finalizeForm() {
     document.querySelectorAll('.form-section').forEach((section, index) => {
         const inputs = section.querySelectorAll('input[required], select[required], textarea[required]');
         inputs.forEach(input => {
+            // Skip validation for conditional fields that are hidden
+            const parentGroup = input.closest('.conditional-field');
+            if (parentGroup && !parentGroup.classList.contains('show')) {
+                return; // Skip hidden conditional fields
+            }
+            
             if (input.type === 'radio') {
                 const radioGroup = section.querySelectorAll(`input[name="${input.name}"]`);
                 const isChecked = Array.from(radioGroup).some(radio => radio.checked);
@@ -1388,7 +1449,7 @@ function validateEmployeeNumbers() {
             `Please ensure all positions add up to Total Employees.`,
             'error'
         );
-        // Navigate to Section E
+        // Navigate to Section C
         navigateToSection(3);
         return false;
     }
@@ -1579,6 +1640,11 @@ function clearForm(resetStatus = true) {
         districtSelect.innerHTML = '<option value="">Select...</option>';
         districtSelect.disabled = true;
     }
+    
+    // Hide all conditional fields
+    document.querySelectorAll('.conditional-field').forEach(field => {
+        field.classList.remove('show');
+    });
     
     // Clear GPS data
     state.gpsLocation = null;
@@ -1825,10 +1891,28 @@ function renderAnalysisDashboard(data) {
             <canvas id="ownerGenderChart" class="chart-canvas"></canvas>
         </div>
 
+        <!-- OWNERSHIP ENTITY DISTRIBUTION -->
+        <div class="chart-container">
+            <div class="chart-title">🏛️ OWNERSHIP ENTITY DISTRIBUTION</div>
+            <canvas id="ownershipEntityChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- OWNERSHIP TYPE DISTRIBUTION -->
+        <div class="chart-container">
+            <div class="chart-title">📋 OWNERSHIP TYPE DISTRIBUTION</div>
+            <canvas id="ownershipTypeChart" class="chart-canvas"></canvas>
+        </div>
+
         <!-- RECRUITMENT TRENDS -->
         <div class="chart-container">
             <div class="chart-title">📈 WOMEN RECRUITED IN LAST 12 MONTHS</div>
             <canvas id="recruitmentChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- LAST FEMALE HIRE -->
+        <div class="chart-container">
+            <div class="chart-title">🕐 WHEN LAST HIRED A FEMALE STAFF MEMBER</div>
+            <canvas id="lastFemaleHireChart" class="chart-canvas"></canvas>
         </div>
 
         <!-- RETENTION ANALYSIS -->
@@ -1885,12 +1969,6 @@ function renderAnalysisDashboard(data) {
             <canvas id="attritionImpactChart" class="chart-canvas"></canvas>
         </div>
 
-        <!-- FIRST FEMALE HIRE -->
-        <div class="chart-container">
-            <div class="chart-title">🕐 WHEN ORGANIZATION FIRST HIRED FEMALE STAFF</div>
-            <canvas id="firstFemaleHireChart" class="chart-canvas"></canvas>
-        </div>
-
         <!-- GENDER REPRESENTATION OVERVIEW -->
         <div class="chart-container">
             <div class="chart-title">📊 COMPREHENSIVE GENDER REPRESENTATION OVERVIEW</div>
@@ -1909,7 +1987,10 @@ function renderAnalysisDashboard(data) {
         renderLeadershipChart(data);
         renderDepartmentChart(data);
         renderOwnerGenderChart(data.ownerGender);
+        if (data.ownershipEntity) renderOwnershipEntityChart(data.ownershipEntity);
+        if (data.ownershipType) renderOwnershipTypeChart(data.ownershipType);
         renderRecruitmentChart(data.womenRecruited);
+        if (data.lastFemaleHire) renderLastFemaleHireChart(data.lastFemaleHire);
         renderRetentionChart(data.womenRetained);
         renderBarriersChart(data.barriers);
         renderEqualRetentionChart(data.equalRetention);
@@ -1919,7 +2000,6 @@ function renderAnalysisDashboard(data) {
         renderStayDurationChart(data.stayDuration);
         renderHigherAttritionChart(data.higherAttrition);
         renderAttritionImpactChart(data.attritionImpact);
-        renderFirstFemaleHireChart(data.firstFemaleHire);
         renderComprehensiveGenderChart(data);
     }, 100);
 }
@@ -2220,7 +2300,7 @@ function renderOwnerGenderChart(ownerGender) {
             labels: Object.keys(ownerGender),
             datasets: [{
                 data: Object.values(ownerGender),
-                backgroundColor: ['#004080', '#dc3545', '#6c757d'],
+                backgroundColor: ['#004080', '#dc3545', '#6c757d', '#ffc107'],
                 borderWidth: 2,
                 borderColor: '#ffffff'
             }]
@@ -2231,6 +2311,69 @@ function renderOwnerGenderChart(ownerGender) {
             plugins: {
                 legend: {
                     position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function renderOwnershipEntityChart(ownershipEntity) {
+    const ctx = document.getElementById('ownershipEntityChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(ownershipEntity),
+            datasets: [{
+                data: Object.values(ownershipEntity),
+                backgroundColor: ['#004080', '#28a745', '#ffc107'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function renderOwnershipTypeChart(ownershipType) {
+    const ctx = document.getElementById('ownershipTypeChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(ownershipType),
+            datasets: [{
+                label: 'Number of Media Houses',
+                data: Object.values(ownershipType),
+                backgroundColor: '#17a2b8',
+                borderColor: '#17a2b8',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
                 }
             }
         }
@@ -2250,6 +2393,42 @@ function renderRecruitmentChart(womenRecruited) {
                 data: Object.values(womenRecruited),
                 backgroundColor: '#28a745',
                 borderColor: '#28a745',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderLastFemaleHireChart(lastFemaleHire) {
+    const ctx = document.getElementById('lastFemaleHireChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(lastFemaleHire),
+            datasets: [{
+                label: 'Number of Organizations',
+                data: Object.values(lastFemaleHire),
+                backgroundColor: '#20c997',
+                borderColor: '#20c997',
                 borderWidth: 1
             }]
         },
@@ -2501,42 +2680,6 @@ function renderAttritionImpactChart(attritionImpact) {
             },
             scales: {
                 x: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
-}
-
-function renderFirstFemaleHireChart(firstFemaleHire) {
-    const ctx = document.getElementById('firstFemaleHireChart');
-    if (!ctx) return;
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: Object.keys(firstFemaleHire),
-            datasets: [{
-                label: 'Number of Organizations',
-                data: Object.values(firstFemaleHire),
-                backgroundColor: '#20c997',
-                borderColor: '#20c997',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
                     beginAtZero: true,
                     ticks: {
                         stepSize: 1
